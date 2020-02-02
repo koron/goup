@@ -5,11 +5,12 @@ package godlremote
 //
 // See https://github.com/golang/website/blob/d0b4462f2c677caac44e6f5cb06ea9fd3555f222/internal/dl/dl.go#L131-L137
 type Release struct {
-	Version        string `json:"version"`
-	Stable         bool   `json:"stable"`
-	Files          []File `json:"files"`
+	Version string `json:"version"`
+	Stable  bool   `json:"stable"`
+	Files   []File `json:"files"`
 }
 
+// Releases is a collection of Release
 type Releases []Release
 
 // Filter returns only matched Releases.
