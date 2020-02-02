@@ -77,4 +77,6 @@ go1.13.7.windows-amd64
 Now `C:\golang\current` is a symblic link to go1.13.7's dir.
 You can add `C:\golang\current\bin` to `PATH` env, to run `go` command.
 
+`GODL_ROOT` env works as instead of `-root C:\golang` option.
+
 [devmode]:https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development
