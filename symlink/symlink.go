@@ -2,9 +2,9 @@
 
 package symlink
 
-import "errors"
+import "os"
 
 // Dir creates symbolic link for dir.
 func Dir(src, dst string) error {
-	return errors.New("LinkDir not implemented yet")
+	return os.Symlink(src, dst)
 }

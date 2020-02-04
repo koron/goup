@@ -16,10 +16,12 @@ func localSwitch(fs *flag.FlagSet, args []string) error {
 	var goos string
 	var goarch string
 	var dryrun bool
+	var linkname string
 	fs.StringVar(&root, "root", os.Getenv("GODL_ROOT"), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
+	fs.StringVar(&linkname, "linkname", "current", "name of symbolic link to switch")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -63,7 +65,7 @@ func localSwitch(fs *flag.FlagSet, args []string) error {
 		return nil
 	}
 
-	dstdir := filepath.Join(root, "current")
+	dstdir := filepath.Join(root, linkname)
 	// remove dstdir (symbolic link)
 	_, err = os.Lstat(dstdir)
 	if err == nil {
