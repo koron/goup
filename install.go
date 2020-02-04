@@ -14,6 +14,7 @@ import (
 
 	"github.com/koron-go/zipx"
 	"github.com/koron/godltool/godlremote"
+	"github.com/koron/godltool/tarx"
 )
 
 func install(fs *flag.FlagSet, args []string) error {
@@ -127,12 +128,22 @@ func (ins installer) install(ctx context.Context, ver string) error {
 	return nil
 }
 
-func (ins installer) extract(ctx context.Context, distdir string, srcfile string) error {
-	err := zipx.New().ExtractFile(ctx, srcfile, zipDestDir(distdir))
-	if err != nil {
-		return err
+func (ins installer) extract(ctx context.Context, dstdir string, srcfile string) error {
+	if strings.HasSuffix(srcfile, ".zip") {
+		err := zipx.New().ExtractFile(ctx, srcfile, zipDestDir(dstdir))
+		if err != nil {
+			return err
+		}
+		return nil
 	}
-	return nil
+	if strings.HasSuffix(srcfile, ".tar.gz") {
+		err := tarx.ExtractFile(ctx, srcfile, tarDestDir(dstdir))
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	return fmt.Errorf("unsupported archive: %s", srcfile)
 }
 
 type zipDestDir string
@@ -162,22 +173,70 @@ func (d zipDestDir) CreateFile(name string, info zipx.FileInfo) (io.Writer, erro
 	if err != nil {
 		return nil, err
 	}
-	return &zipFile{File: f, mtime: info.Modified}, nil
+	return &outFile{file: f, mtime: info.Modified}, nil
 }
 
-type zipFile struct {
-	*os.File
-	mtime time.Time
-}
+type tarDestDir string
 
-func (zf zipFile) Write(b []byte) (int, error) {
-	return zf.File.Write(b)
-}
-
-func (zf zipFile) Close() error {
-	err := zf.File.Close()
+func (d tarDestDir) CreateDir(info tarx.DirInfo) error {
+	if !strings.HasPrefix(info.Name, "go/") {
+		return fmt.Errorf("dir not under go/: %s", info.Name)
+	}
+	dir := filepath.Join(string(d), info.Name[3:])
+	err := os.MkdirAll(dir, os.FileMode(info.Mode))
 	if err != nil {
 		return err
 	}
-	return os.Chtimes(zf.File.Name(), zf.mtime, zf.mtime)
+	return nil
+}
+
+func (d tarDestDir) CreateFile(info tarx.FileInfo) (io.Writer, error) {
+	if !strings.HasPrefix(info.Name, "go/") {
+		return nil, fmt.Errorf("file not under go/: %s", info.Name)
+	}
+	info.Name = filepath.Join(string(d), info.Name[3:])
+	err := os.MkdirAll(filepath.Dir(info.Name), 0777)
+	if err != nil {
+		return nil, err
+	}
+	f, err := os.Create(info.Name)
+	if err != nil {
+		return nil, err
+	}
+	return &outFile{
+		file:  f,
+		mtime: info.ModTime,
+		mode:  os.FileMode(info.Mode),
+	}, nil
+}
+
+type outFile struct {
+	file  *os.File
+	mtime time.Time
+	mode  os.FileMode
+}
+
+func (of outFile) Write(b []byte) (int, error) {
+	return of.file.Write(b)
+}
+
+func (of outFile) Close() error {
+	name := of.file.Name()
+	err := of.file.Close()
+	if err != nil {
+		return err
+	}
+	if !of.mtime.IsZero() {
+		err := os.Chtimes(name, of.mtime, of.mtime)
+		if err != nil {
+			return err
+		}
+	}
+	if of.mode != 0 {
+		err := os.Chmod(name, of.mode)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
