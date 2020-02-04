@@ -80,7 +80,7 @@ func (list installedGos) filter(f func(installedGo) bool) installedGos {
 	return res
 }
 
-var rxGoDir = regexp.MustCompile(`^(go\d+(?:\.\d+)*)\.(\D[^-]*)-(.+)$`)
+var rxGoDir = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:beta|alpha)\d+)?)\.(\D[^-]*)-(.+)$`)
 
 func listInstalledGo(root string) (installedGos, error) {
 	filist, err := ioutil.ReadDir(root)
