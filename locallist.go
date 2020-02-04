@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 )
 
 func localList(fs *flag.FlagSet, args []string) error {
 	var root string
+	var linkname string
 	fs.StringVar(&root, "root", os.Getenv("GODL_ROOT"), "root dir to install")
+	fs.StringVar(&linkname, "linkname", "current", "name of symbolic link to switch")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -19,12 +22,22 @@ func localList(fs *flag.FlagSet, args []string) error {
 		fs.PrintDefaults()
 		return errors.New("required -root")
 	}
+
+	curr, err := localCurrent(filepath.Join(root, linkname))
+	if err != nil {
+		return err
+	}
+
 	list, err := listInstalledGo(root)
 	if err != nil {
 		return err
 	}
 	fmt.Println("Local Version:")
 	for _, g := range list {
+		if curr != "" && g.name == curr {
+			fmt.Printf("  %s (%s)\n", g.name, linkname)
+			continue
+		}
 		fmt.Printf("  %s\n", g.name)
 	}
 	return nil
@@ -38,6 +51,24 @@ type installedGo struct {
 }
 
 type installedGos []installedGo
+
+func localCurrent(name string) (string, error) {
+	fi, err := os.Lstat(name)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", nil
+		}
+		return "", err
+	}
+	if fi.Mode()&os.ModeSymlink == 0 {
+		return "", nil
+	}
+	rname, err := filepath.EvalSymlinks(name)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Base(rname), nil
+}
 
 func (list installedGos) filter(f func(installedGo) bool) installedGos {
 	var res installedGos

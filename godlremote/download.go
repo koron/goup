@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 )
@@ -54,7 +53,6 @@ func (f File) Download(ctx context.Context, name string, force bool) error {
 			return err
 		}
 		if ok {
-			log.Printf("hit the cache: %s", name)
 			return nil
 		}
 	}
