@@ -112,7 +112,7 @@ func (ins installer) install(ctx context.Context, ver string) error {
 		return err
 	}
 	name := filepath.Join(dldir, af.Filename)
-	err = af.Download(ctx, name)
+	err = af.Download(ctx, name, ins.force)
 	if err != nil {
 		return err
 	}

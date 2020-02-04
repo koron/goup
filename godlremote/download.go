@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
@@ -46,7 +47,21 @@ func download(ctx context.Context, base string, all bool) (Releases, error) {
 
 // Download downloads a file as name.
 // This fail if size or checksum are not match.
-func (f File) Download(ctx context.Context, name string) error {
+func (f File) Download(ctx context.Context, name string, force bool) error {
+	if !force {
+		ok, err := f.isDownloaded(name)
+		if err != nil {
+			return err
+		}
+		if ok {
+			log.Printf("hit the cache: %s", name)
+			return nil
+		}
+	}
+	return f.download(ctx, name)
+}
+
+func (f File) download(ctx context.Context, name string) error {
 	u := dlURL + f.Filename
 	req, err := http.NewRequestWithContext(ctx, "GET", u, nil)
 	if err != nil {
@@ -80,4 +95,31 @@ func (f File) Download(ctx context.Context, name string) error {
 		return fmt.Errorf("checksum mismatch expected=%s actual=%s for %s", f.ChecksumSHA256, sum, u)
 	}
 	return nil
+}
+
+func (f File) isDownloaded(name string) (bool, error) {
+	fi, err := os.Stat(name)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	if fi.Size() != f.Size {
+		return false, nil
+	}
+	r, err := os.Open(name)
+	if err != nil {
+		return false, err
+	}
+	defer r.Close()
+	h := sha256.New()
+	_, err = io.CopyN(h, r, f.Size)
+	if err != nil {
+		return false, err
+	}
+	if fmt.Sprintf("%x", h.Sum(nil)) != f.ChecksumSHA256 {
+		return false, nil
+	}
+	return true, nil
 }
