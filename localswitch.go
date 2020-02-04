@@ -7,8 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-
-	"github.com/koron/godltool/symlink"
 )
 
 func localSwitch(fs *flag.FlagSet, args []string) error {
@@ -75,7 +73,7 @@ func localSwitch(fs *flag.FlagSet, args []string) error {
 		}
 	}
 
-	err = symlink.Dir(g.name, dstdir)
+	err = os.Symlink(g.name, dstdir)
 	if err != nil {
 		return err
 	}
