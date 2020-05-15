@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/koron/godltool/godlremote"
+	"github.com/koron/goup/godlremote"
 )
 
 func remoteList(fs *flag.FlagSet, args []string) error {

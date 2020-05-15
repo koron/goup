@@ -1,9 +1,9 @@
-# koron/godltool
+# koron/goup
 
-[![GoDoc](https://godoc.org/github.com/koron/godltool?status.svg)](https://godoc.org/github.com/koron/godltool)
-[![Actions/Go](https://github.com/koron/godltool/workflows/Go/badge.svg)](https://github.com/koron/godltool/actions?query=workflow%3AGo)
-[![CircleCI](https://img.shields.io/circleci/project/github/koron/godltool/master.svg)](https://circleci.com/gh/koron/godltool/tree/master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/koron/godltool)](https://goreportcard.com/report/github.com/koron/godltool)
+[![GoDoc](https://godoc.org/github.com/koron/goup?status.svg)](https://godoc.org/github.com/koron/goup)
+[![Actions/Go](https://github.com/koron/goup/workflows/Go/badge.svg)](https://github.com/koron/goup/actions?query=workflow%3AGo)
+[![CircleCI](https://img.shields.io/circleci/project/github/koron/goup/master.svg)](https://circleci.com/gh/koron/goup/tree/master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/koron/goup)](https://goreportcard.com/report/github.com/koron/goup)
 
 Utility to download, extract and switch released go versions on Windows.
 
@@ -12,7 +12,7 @@ Utility to download, extract and switch released go versions on Windows.
 Check stable go releases.
 
 ```
-> godltool remotelist
+> goup remotelist
 Remote Version:
   go1.13.7
   go1.12.16
@@ -21,7 +21,7 @@ Remote Version:
 Check all go releases.
 
 ```
-> godltool remotelist -all
+> goup remotelist -all
 Remote Version:
   go1.13.7
   go1.12.16
@@ -39,13 +39,13 @@ Remote Version:
 Install (=download and extract) a go archive.
 
 ```
-> godltool install -root C:\golang go1.13.7
+> goup install -root C:\golang go1.13.7
 ```
 
 List installed go.
 
 ```
-> godltool list -root C:\golang
+> goup list -root C:\golang
 Local Version:
   go1.12.16.windows-amd64
   go1.13.7.windows-amd64
@@ -55,7 +55,7 @@ Switch go version.  This requires symbolic link to directory, so you may need
 to install ["Windows Developer mode"][devmode].
 
 ```
-> godltool switch -root C:\golang go1.13.7
+> goup switch -root C:\golang go1.13.7
 go1.13.7.windows-amd64
 
 > dir C:\golang

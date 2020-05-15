@@ -6,7 +6,7 @@ jobs:
     - image: circleci/golang:latest
       environment:
         GO111MODULE: 'off'
-    working_directory: /go/src/github.com/koron/godltool
+    working_directory: /go/src/github.com/koron/goup
     steps:
     - run: go version && go env
     - checkout
@@ -18,7 +18,7 @@ jobs:
     - image: circleci/golang:latest
       environment:
         GO111MODULE: 'on'
-    working_directory: /go/src/github.com/koron/godltool
+    working_directory: /go/src/github.com/koron/goup
     steps:
     - run: go version && go env
     - checkout

@@ -1,4 +1,4 @@
-module github.com/koron/godltool
+module github.com/koron/goup
 
 go 1.13
 

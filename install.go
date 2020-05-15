@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/koron-go/zipx"
-	"github.com/koron/godltool/godlremote"
-	"github.com/koron/godltool/tarx"
+	"github.com/koron/goup/godlremote"
+	"github.com/koron/goup/tarx"
 )
 
 func install(fs *flag.FlagSet, args []string) error {
