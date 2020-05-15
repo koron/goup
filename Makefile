@@ -4,7 +4,7 @@ build:
 
 .PHONY: test
 test:
-	go test
+	go test ./...
 
 .PHONY: tags
 tags:
