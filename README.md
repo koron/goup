@@ -2,7 +2,6 @@
 
 [![GoDoc](https://godoc.org/github.com/koron/goup?status.svg)](https://godoc.org/github.com/koron/goup)
 [![Actions/Go](https://github.com/koron/goup/workflows/Go/badge.svg)](https://github.com/koron/goup/actions?query=workflow%3AGo)
-[![CircleCI](https://img.shields.io/circleci/project/github/koron/goup/master.svg)](https://circleci.com/gh/koron/goup/tree/master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/koron/goup)](https://goreportcard.com/report/github.com/koron/goup)
 
 Utility to download, extract and switch released go versions on Windows.
