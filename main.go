@@ -51,4 +51,5 @@ var cmds = subcmd.Subcmds{
 	"uninstall":  subcmd.Main2(uninstall),
 	"list":       subcmd.Main2(localList),
 	"switch":     subcmd.Main2(localSwitch),
+	"clean":      subcmd.Main2(localClean),
 }
