@@ -13,7 +13,7 @@ import (
 func localList(fs *flag.FlagSet, args []string) error {
 	var root string
 	var linkname string
-	fs.StringVar(&root, "root", os.Getenv("GODL_ROOT"), "root dir to install")
+	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&linkname, "linkname", "current", "name of symbolic link to switch")
 	if err := fs.Parse(args); err != nil {
 		return err

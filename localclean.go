@@ -16,7 +16,7 @@ func localClean(fs *flag.FlagSet, args []string) error {
 	var root string
 	var dryrun bool
 	var all bool
-	fs.StringVar(&root, "root", os.Getenv("GODL_ROOT"), "root dir to install")
+	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
 	fs.BoolVar(&all, "all", false, "clean all caches")
 	if err := fs.Parse(args); err != nil {

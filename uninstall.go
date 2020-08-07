@@ -15,7 +15,7 @@ func uninstall(fs *flag.FlagSet, args []string) error {
 	var goos string
 	var goarch string
 	var clean bool
-	fs.StringVar(&root, "root", os.Getenv("GODL_ROOT"), "root dir to install")
+	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")
 	fs.BoolVar(&clean, "clean", false, "clean distfiles")

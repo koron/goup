@@ -10,20 +10,16 @@ import (
 )
 
 func localSwitch(fs *flag.FlagSet, args []string) error {
-	defaultLinkname, ok := os.LookupEnv("GOUP_SWITCH_LINKNAME")
-	if !ok {
-		defaultLinkname = "current"
-	}
 	var root string
 	var goos string
 	var goarch string
 	var dryrun bool
 	var linkname string
-	fs.StringVar(&root, "root", os.Getenv("GODL_ROOT"), "root dir to install")
+	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
-	fs.StringVar(&linkname, "linkname", defaultLinkname, "name of symbolic link to switch. Env.GOUP_SWITCH_LINKNAME is used for default")
+	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}

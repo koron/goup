@@ -22,7 +22,7 @@ func install(fs *flag.FlagSet, args []string) error {
 	var force bool
 	var goos string
 	var goarch string
-	fs.StringVar(&root, "root", os.Getenv("GODL_ROOT"), "root dir to install")
+	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.BoolVar(&force, "force", false, "override installation")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")

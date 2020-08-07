@@ -35,6 +35,23 @@ func errorf(msg string, args ...interface{}) {
 	errorLog.Printf(msg, args...)
 }
 
+func envGoupRoot() string {
+	s := os.Getenv("GOUP_ROOT")
+	if s != "" {
+		return s
+	}
+	// for comaptibility. this will be removed in future version.
+	return os.Getenv("GODL_ROOT")
+}
+
+func envGoupLinkname() string {
+	s := os.Getenv("GOUP_LINKNAME")
+	if s != "" {
+		return s
+	}
+	return "current"
+}
+
 func main() {
 	flag.BoolVar(&debugEnable, "debug", false, "enable debug log")
 	flag.Parse()
