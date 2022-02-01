@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"flag"
 	"fmt"
@@ -8,6 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
+
+	"golang.org/x/mod/semver"
 )
 
 func localList(fs *flag.FlagSet, args []string) error {
@@ -48,6 +52,7 @@ type installedGo struct {
 	os      string
 	arch    string
 	name    string
+	semver  string
 }
 
 type installedGos []installedGo
@@ -96,13 +101,52 @@ func listInstalledGo(root string) (installedGos, error) {
 		if m == nil {
 			continue
 		}
+		ver := regulateVersion(m[1])
+		if ver == "" {
+			continue
+		}
 		list = append(list, installedGo{
 			version: m[1],
 			os:      m[2],
 			arch:    m[3],
 			name:    m[0],
+			semver:  ver,
 		})
 	}
-	// TODO: sort
+	sort.Slice(list, func(i, j int) bool {
+		cmp := semver.Compare(list[i].semver, list[j].semver)
+		if cmp != 0 {
+			return cmp > 0
+		}
+		return list[i].semver > list[j].semver
+	})
 	return list, nil
+}
+
+var rxGoVer = regexp.MustCompile(`^go(?P<major>\d+)(?:\.(?P<minor>\d+)(?:\.(?P<patch>\d+))?)?(?P<pr>[A-Za-z][-.0-9A-Za-z]*)?`)
+
+func regnum(s string) string {
+	if s == "" {
+		return "0"
+	}
+	return s
+}
+
+func regulateVersion(s string) string {
+	m := rxGoVer.FindStringSubmatch(s)
+	if m == nil {
+		return ""
+	}
+	bb := &bytes.Buffer{}
+	bb.WriteRune('v')
+	bb.WriteString(regnum(m[1]))
+	bb.WriteRune('.')
+	bb.WriteString(regnum(m[2]))
+	bb.WriteRune('.')
+	bb.WriteString(regnum(m[3]))
+	if m[4] != "" {
+		bb.WriteRune('-')
+		bb.WriteString(m[4])
+	}
+	return bb.String()
 }
