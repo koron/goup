@@ -1,9 +1,9 @@
 package godlremote
 
-// File represents a file on the golang.org downloads page.
+// File represents a file on the go.dev downloads page.
 // It should be kept in sync with the upload code in x/build/cmd/release.
 //
-// See https://github.com/golang/build/blob/5bb938ef020fb4b7f22d366b1e0dc8f9b425cc2f/cmd/release/upload.go#L46-L57
+// See https://github.com/golang/build/blob/aa7fa4b2107cceba70eb6901c91e3be4b8bc419b/cmd/release/upload.go#L38-L47
 type File struct {
 	Filename       string `json:"filename"`
 	OS             string `json:"os"`

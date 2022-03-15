@@ -10,9 +10,9 @@ import (
 	"os"
 )
 
-const dlURL = "https://golang.org/dl/"
+const dlURL = "https://go.dev/dl/"
 
-// Download downloads releases from golang.org/dl
+// Download downloads releases from go.dev/dl
 func Download(ctx context.Context, all bool) (Releases, error) {
 	return download(ctx, dlURL, all)
 }
