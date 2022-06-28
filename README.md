@@ -1,6 +1,6 @@
 # koron/goup
 
-[![GoDoc](https://godoc.org/github.com/koron/goup?status.svg)](https://godoc.org/github.com/koron/goup)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/koron/goup)](https://pkg.go.dev/github.com/koron/goup)
 [![Actions/Go](https://github.com/koron/goup/workflows/Go/badge.svg)](https://github.com/koron/goup/actions?query=workflow%3AGo)
 [![Go Report Card](https://goreportcard.com/badge/github.com/koron/goup)](https://goreportcard.com/report/github.com/koron/goup)
 

@@ -1,3 +1,6 @@
+/*
+Package tarx providers extractor of tar archive.
+*/
 package tarx
 
 import (
@@ -104,7 +107,6 @@ func Extract(ctx context.Context, r io.Reader, dst Destination) error {
 			return fmt.Errorf("unsupported tar's Typeflag: %c", h.Typeflag)
 		}
 	}
-	return nil
 }
 
 func extractDir(dst Destination, h *tar.Header) error {
