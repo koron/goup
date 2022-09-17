@@ -1,3 +1,4 @@
+// Package verutil provides version utilities.
 package verutil
 
 import (

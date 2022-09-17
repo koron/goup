@@ -88,7 +88,7 @@ func upgrade(fs *flag.FlagSet, args []string) error {
 		if target.curr {
 			err := switchGo(root, linkname, installedName)
 			if err != nil {
-				return fmt.Errorf("failed to switch Go: %w", installedName)
+				return fmt.Errorf("failed to switch Go %s: %w", installedName, err)
 			}
 		}
 		// clean old version
