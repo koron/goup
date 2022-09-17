@@ -70,40 +70,61 @@ func upgrade(fs *flag.FlagSet, args []string) error {
 	}
 
 	// repeat versions to be upgraded
-	// TODO: consider dryrun
 	for _, target := range upgrades {
+		ver := target.remote.origin.Version
 		// install new version
-		f, err := installer{
+		ins := installer{
 			releases: godlremote.Releases{target.remote.origin},
 			rootdir:  root,
 			force:    false,
 			goos:     target.local.os,
 			goarch:   target.local.arch,
-		}.install2(ctx, target.remote.origin.Version)
-		if err != nil {
-			return fmt.Errorf("failed to install Go %s: %w", target.remote.origin.Version, err)
+		}
+		if !dryrun {
+			err := ins.install(ctx, ver)
+			if err != nil {
+				return fmt.Errorf("failed to install Go %s: %w", ver, err)
+			}
+		} else {
+			// TODO: show "dryrun" message
+		}
+
+		f, ok := ins.archiveFile(ver)
+		if !ok {
+			return errors.New("XXX")
 		}
 		installedName := f.Name()
+
 		// switch "current" version if needed
 		if target.curr {
-			err := switchGo(root, linkname, installedName)
-			if err != nil {
-				return fmt.Errorf("failed to switch Go %s: %w", installedName, err)
+			if !dryrun {
+				err := switchGo(root, linkname, installedName)
+				if err != nil {
+					return fmt.Errorf("failed to switch Go %s: %w", installedName, err)
+				}
+			} else {
+				// TODO: show "dryrun" message
 			}
 		}
+
 		// clean old version
-		err = uninstaller{
+		uni := uninstaller{
 			rootdir: root,
 			goos:    target.local.os,
 			goarch:  target.local.arch,
 			clean:   false,
-		}.uninstall(ctx, target.local.version)
-		if err != nil {
-			return fmt.Errorf("failed to uinstall Go %s: %w", target.local.name, err)
+		}
+		if !dryrun {
+			err = uni.uninstall(ctx, target.local.version)
+			if err != nil {
+				return fmt.Errorf("failed to uinstall Go %s: %w", target.local.name, err)
+			}
+		} else {
+			// TODO: show "dryrun" message
 		}
 	}
 
-	return errors.New("not implemented yet")
+	return nil
 }
 
 type latestRelease struct {

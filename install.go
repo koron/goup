@@ -102,35 +102,30 @@ func (ins installer) extdir(f godlremote.File) (string, error) {
 }
 
 func (ins installer) install(ctx context.Context, ver string) error {
-	_, err := ins.install2(ctx, ver)
-	return err
-}
-
-func (ins installer) install2(ctx context.Context, ver string) (*godlremote.File, error) {
 	af, ok := ins.archiveFile(ver)
 	if !ok {
-		return nil, fmt.Errorf("no archives found for version=%s OS=%s arch=%s",
+		return fmt.Errorf("no archives found for version=%s OS=%s arch=%s",
 			ver, ins.goos, ins.goarch)
 	}
 	dldir, err := ins.dldir()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	name := filepath.Join(dldir, af.Filename)
 	err = af.Download(ctx, name, ins.force)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	extdir, err := ins.extdir(af)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = ins.extract(ctx, extdir, name)
 	if err != nil {
 		os.RemoveAll(extdir)
-		return nil, err
+		return err
 	}
-	return &af, nil
+	return nil
 }
 
 func (ins installer) extract(ctx context.Context, dstdir string, srcfile string) error {
