@@ -63,21 +63,24 @@ func localSwitch(fs *flag.FlagSet, args []string) error {
 		fmt.Fprintln(os.Stderr, "not installed because of dryrun")
 		return nil
 	}
+	return switchGo(root, linkname, g.name)
+}
 
+// switchGo switches/updates "current" symbolic link to goName.
+func switchGo(root, linkname, goName string) error {
 	dstdir := filepath.Join(root, linkname)
 	// remove dstdir (symbolic link)
-	_, err = os.Lstat(dstdir)
+	_, err := os.Lstat(dstdir)
 	if err == nil {
 		err := os.Remove(dstdir)
 		if err != nil {
 			return err
 		}
 	}
-
-	err = os.Symlink(g.name, dstdir)
+	// create a symbolic link
+	err = os.Symlink(goName, dstdir)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

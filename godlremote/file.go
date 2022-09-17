@@ -13,3 +13,8 @@ type File struct {
 	Size           int64  `json:"size"`
 	Kind           string `json:"kind"` // "archive", "installer", "source"
 }
+
+// Name returns identical name.
+func (f File) Name() string {
+	return f.Version + "." + f.OS + "-" + f.Arch
+}

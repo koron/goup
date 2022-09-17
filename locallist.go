@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"flag"
 	"fmt"
@@ -10,6 +9,7 @@ import (
 	"regexp"
 	"sort"
 
+	"github.com/koron/goup/internal/verutil"
 	"golang.org/x/mod/semver"
 )
 
@@ -104,7 +104,7 @@ func listInstalledGo(root string) (installedGos, error) {
 		if m == nil {
 			continue
 		}
-		ver := regulateVersion(m[1])
+		ver := verutil.Regulate(m[1])
 		if ver == "" {
 			continue
 		}
@@ -124,39 +124,4 @@ func listInstalledGo(root string) (installedGos, error) {
 		return list[i].semver > list[j].semver
 	})
 	return list, nil
-}
-
-var rxGoVer = regexp.MustCompile(`^go(?P<major>\d+)(?:\.(?P<minor>\d+)(?:\.(?P<patch>\d+))?)?(?P<pr>[A-Za-z][-.0-9A-Za-z]*)?`)
-
-func regnum(s string) string {
-	if s == "" {
-		return "0"
-	}
-	return s
-}
-
-// regulateVersion regulates Go version string as semantic versioning.
-//
-// Examples:
-//
-//	go1.19    -> v1.19.0
-//	go1.18.6  -> v1.18.6
-//	go1.20rc1 -> v1.20.0-rc1
-func regulateVersion(s string) string {
-	m := rxGoVer.FindStringSubmatch(s)
-	if m == nil {
-		return ""
-	}
-	bb := &bytes.Buffer{}
-	bb.WriteRune('v')
-	bb.WriteString(regnum(m[1]))
-	bb.WriteRune('.')
-	bb.WriteString(regnum(m[2]))
-	bb.WriteRune('.')
-	bb.WriteString(regnum(m[3]))
-	if m[4] != "" {
-		bb.WriteRune('-')
-		bb.WriteString(m[4])
-	}
-	return bb.String()
 }

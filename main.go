@@ -66,6 +66,7 @@ var cmds = subcmd.Subcmds{
 	"remotelist": subcmd.Main2(remoteList),
 	"install":    subcmd.Main2(install),
 	"uninstall":  subcmd.Main2(uninstall),
+	"upgrade":    subcmd.Main2(upgrade),
 	"list":       subcmd.Main2(localList),
 	"switch":     subcmd.Main2(localSwitch),
 	"clean":      subcmd.Main2(localClean),
