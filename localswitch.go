@@ -9,6 +9,7 @@ import (
 	"runtime"
 )
 
+// localSwitch switches "current" selected Go version.
 func localSwitch(fs *flag.FlagSet, args []string) error {
 	var root string
 	var goos string

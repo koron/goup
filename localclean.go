@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -12,6 +11,7 @@ import (
 
 var rxGoArchive = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:rc|beta|alpha)\d+)?\.\D[^-]*-.+)\.(?:zip|tar\.gz)$`)
 
+// localClean removes download cache.
 func localClean(fs *flag.FlagSet, args []string) error {
 	var root string
 	var dryrun bool
@@ -28,7 +28,7 @@ func localClean(fs *flag.FlagSet, args []string) error {
 	}
 
 	dldir := filepath.Join(root, "dl")
-	filist, err := ioutil.ReadDir(dldir)
+	filist, err := os.ReadDir(dldir)
 	if err != nil {
 		return err
 	}

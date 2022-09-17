@@ -2,7 +2,6 @@ package tarx
 
 import (
 	"io"
-	"io/ioutil"
 )
 
 // Discard is a destination which discard all extracted files and dirs.
@@ -15,5 +14,5 @@ func (discard) CreateDir(info DirInfo) error {
 }
 
 func (discard) CreateFile(info FileInfo) (io.Writer, error) {
-	return ioutil.Discard, nil
+	return io.Discard, nil
 }

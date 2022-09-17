@@ -5,7 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -14,6 +13,7 @@ import (
 	"golang.org/x/mod/semver"
 )
 
+// localList lists all Go versions which locally installed.
 func localList(fs *flag.FlagSet, args []string) error {
 	var root string
 	var linkname string
@@ -47,16 +47,8 @@ func localList(fs *flag.FlagSet, args []string) error {
 	return nil
 }
 
-type installedGo struct {
-	version string
-	os      string
-	arch    string
-	name    string
-	semver  string
-}
-
-type installedGos []installedGo
-
+// localCurrent gets name of Go directory which is selected as "current"
+// version.
 func localCurrent(name string) (string, error) {
 	fi, err := os.Lstat(name)
 	if err != nil {
@@ -75,6 +67,16 @@ func localCurrent(name string) (string, error) {
 	return filepath.Base(rname), nil
 }
 
+type installedGo struct {
+	version string
+	os      string
+	arch    string
+	name    string
+	semver  string
+}
+
+type installedGos []installedGo
+
 func (list installedGos) filter(f func(installedGo) bool) installedGos {
 	var res installedGos
 	for _, g := range list {
@@ -87,8 +89,9 @@ func (list installedGos) filter(f func(installedGo) bool) installedGos {
 
 var rxGoDir = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:rc|beta|alpha)\d+)?)\.(\D[^-]*)-(.+)$`)
 
+// listInstalledGo lists installed Go verions.
 func listInstalledGo(root string) (installedGos, error) {
-	filist, err := ioutil.ReadDir(root)
+	filist, err := os.ReadDir(root)
 	if err != nil {
 		return nil, err
 	}
@@ -132,6 +135,13 @@ func regnum(s string) string {
 	return s
 }
 
+// regulateVersion regulates Go version string as semantic versioning.
+//
+// Examples:
+//
+//	go1.19    -> v1.19.0
+//	go1.18.6  -> v1.18.6
+//	go1.20rc1 -> v1.20.0-rc1
 func regulateVersion(s string) string {
 	m := rxGoVer.FindStringSubmatch(s)
 	if m == nil {
