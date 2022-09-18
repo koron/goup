@@ -10,10 +10,10 @@ import (
 
 var (
 	debugEnable = false
-	debugLog    = log.New(os.Stderr, "[DEBUG]", log.LstdFlags)
-	infoLog     = log.New(os.Stderr, "[INFO]", log.LstdFlags)
-	warnLog     = log.New(os.Stderr, "[WARN]", log.LstdFlags)
-	errorLog    = log.New(os.Stderr, "[ERROR]", log.LstdFlags)
+	debugLog    = log.New(os.Stderr, "[DEBUG] ", log.LstdFlags)
+	infoLog     = log.New(os.Stderr, "[INFO] ", log.LstdFlags)
+	warnLog     = log.New(os.Stderr, "[WARN] ", log.LstdFlags)
+	errorLog    = log.New(os.Stderr, "[ERROR] ", log.LstdFlags)
 )
 
 func debugf(msg string, args ...interface{}) {
