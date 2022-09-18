@@ -42,17 +42,17 @@ func (ua upgraderActual) uninstall(ctx context.Context, uni uninstaller, ver str
 type upgraderRehearsal struct{}
 
 func (ur upgraderRehearsal) install(ctx context.Context, ins installer, ver string) error {
-	infof("DRYRUN: install Go %s", ver)
+	debugf("DRYRUN: install Go %s", ver)
 	return nil
 }
 
 func (ur upgraderRehearsal) setCurrent(root, linkname, installedName string) error {
-	infof("DRYRUN: set current \"%s\" as %s in %s", linkname, installedName, root)
+	debugf("DRYRUN: set current \"%s\" as %s in %s", linkname, installedName, root)
 	return nil
 }
 
 func (ur upgraderRehearsal) uninstall(ctx context.Context, uni uninstaller, ver string) error {
-	infof("DRYRUN: uninstall Go %s", ver)
+	debugf("DRYRUN: uninstall Go %s", ver)
 	return nil
 }
 
@@ -66,8 +66,8 @@ func (d debugInstalledGos) String() string {
 	return bb.String()
 }
 
-// upgrade upgrades installed Go versions.
-func upgrade(fs *flag.FlagSet, args []string) error {
+// upgradeCmd upgrades installed Go version.
+func upgradeCmd(fs *flag.FlagSet, args []string) error {
 	var root string
 	var linkname string
 	var dryrun bool
@@ -85,6 +85,11 @@ func upgrade(fs *flag.FlagSet, args []string) error {
 	}
 
 	ctx := context.Background()
+	return upgrade(ctx, root, linkname, dryrun, all)
+}
+
+// upgrade upgrades installed Go versions.
+func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error {
 	debugf("upgrade processing...")
 
 	// list local versions.
@@ -132,7 +137,8 @@ func upgrade(fs *flag.FlagSet, args []string) error {
 
 	// repeat versions to be upgraded
 	for _, target := range upgrades {
-		ver := target.remote.origin.Version
+		debugf("upgrading Go %s", target.local.name)
+
 		// install new version
 		ins := installer{
 			releases: godlremote.Releases{target.remote.origin},
@@ -141,6 +147,7 @@ func upgrade(fs *flag.FlagSet, args []string) error {
 			goos:     target.local.os,
 			goarch:   target.local.arch,
 		}
+		ver := target.remote.origin.Version
 		archiveFile, ok := ins.archiveFile(ver)
 		if !ok {
 			warnf("no archive files found for version=%s os=%s arch=%s, skipped", ver, ins.goos, ins.goarch)
@@ -171,6 +178,7 @@ func upgrade(fs *flag.FlagSet, args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to uinstall Go %s: %w", target.local.name, err)
 		}
+		infof("upgraded Go %s to %s", target.local.name, installedName)
 	}
 
 	return nil
