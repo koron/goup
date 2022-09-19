@@ -13,12 +13,6 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-type upgradePlan struct {
-	local  installedGo
-	remote latestRelease
-	curr   bool
-}
-
 type upgrader interface {
 	install(ctx context.Context, ins installer, ver string) error
 	setCurrent(root, linkname, installedName string) error
@@ -54,16 +48,6 @@ func (ur upgraderRehearsal) setCurrent(root, linkname, installedName string) err
 func (ur upgraderRehearsal) uninstall(ctx context.Context, uni uninstaller, ver string) error {
 	debugf("DRYRUN: uninstall Go %s", ver)
 	return nil
-}
-
-type debugInstalledGos installedGos
-
-func (d debugInstalledGos) String() string {
-	bb := &bytes.Buffer{}
-	for _, g := range d {
-		bb.WriteString("\n\t" + g.name)
-	}
-	return bb.String()
 }
 
 // upgradeCmd upgrades installed Go version.
@@ -184,6 +168,12 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 	return nil
 }
 
+type upgradePlan struct {
+	local  installedGo
+	remote latestRelease
+	curr   bool
+}
+
 type latestRelease struct {
 	semver string
 	origin godlremote.Release
@@ -211,6 +201,16 @@ func groupReleases(releases godlremote.Releases) map[string]latestRelease {
 		}
 	}
 	return m
+}
+
+type debugInstalledGos installedGos
+
+func (d debugInstalledGos) String() string {
+	bb := &bytes.Buffer{}
+	for _, g := range d {
+		bb.WriteString("\n\t" + g.name)
+	}
+	return bb.String()
 }
 
 type debugLatestReleases map[string]latestRelease
