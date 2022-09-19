@@ -57,7 +57,7 @@ func upgradeCmd(fs *flag.FlagSet, args []string) error {
 	var dryrun bool
 	var all bool
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
-	fs.StringVar(&linkname, "linkname", "current", "name of symbolic link to switch")
+	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
 	fs.BoolVar(&all, "all", false, "clean all caches")
 	if err := fs.Parse(args); err != nil {
