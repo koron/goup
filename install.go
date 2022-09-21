@@ -83,6 +83,7 @@ func (ins installer) archiveFile(ver string) (godlremote.File, bool) {
 	return godlremote.File{}, false
 }
 
+// dldir creates/assures a directory to download archives.
 func (ins installer) dldir() (string, error) {
 	dir := filepath.Join(ins.rootdir, "dl")
 	err := os.MkdirAll(dir, 0777)
@@ -92,6 +93,7 @@ func (ins installer) dldir() (string, error) {
 	return dir, nil
 }
 
+// exdir creates/assures a directory to extracting an archive.
 func (ins installer) extdir(f godlremote.File) (string, error) {
 	dir := filepath.Join(ins.rootdir, f.Name())
 	err := os.MkdirAll(dir, 0777)
