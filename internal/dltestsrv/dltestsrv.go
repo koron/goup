@@ -85,7 +85,7 @@ func (s *Server) serveFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		log.Printf("failed to write: %w", err)
+		log.Printf("failed to write: %s", err)
 	}
 }
 

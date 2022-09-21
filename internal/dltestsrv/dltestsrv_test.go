@@ -58,3 +58,25 @@ func TestAllReleases(t *testing.T) {
 		t.Fatalf("want 232 releases but got %d", len(rels))
 	}
 }
+
+func TestFileZip(t *testing.T) {
+	srv := httptest.NewServer(&dltestsrv.Server{})
+	defer srv.Close()
+	r, err := srv.Client().Get(srv.URL + "/go1.19.1.windows-amd64.zip")
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Body.Close()
+	// TODO: test r.Body as zip
+}
+
+func TestFileTarGz(t *testing.T) {
+	srv := httptest.NewServer(&dltestsrv.Server{})
+	defer srv.Close()
+	r, err := srv.Client().Get(srv.URL + "/go1.19.1.linux-amd64.tar.gz")
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Body.Close()
+	// TODO: test r.Body as tar.gz
+}
