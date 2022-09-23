@@ -3,17 +3,11 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
-
-func goName(base string) string {
-	return fmt.Sprintf("%s.%s-%s", base, runtime.GOOS, runtime.GOARCH)
-}
 
 func TestUpgradeCmd(t *testing.T) {
 	root := t.TempDir()
@@ -53,7 +47,7 @@ func TestUpgradeDryrun0(t *testing.T) {
 func TestUpgradeDryrun1(t *testing.T) {
 	// an upgrade detected, it is "current"
 	root := t.TempDir()
-	goname := goName("go1.19")
+	goname := "go1.19.windows-amd64"
 	err := os.MkdirAll(filepath.Join(root, goname), 0777)
 	if err != nil {
 		t.Errorf("mkdir failed: %v", err)
