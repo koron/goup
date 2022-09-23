@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -25,14 +26,27 @@ func TestUpgradeCmd(t *testing.T) {
 }
 
 func TestUpgradeCmdEmptyRoot(t *testing.T) {
-	fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
-	err := upgradeCmd(fs, []string{"-root", ""})
-	if err == nil {
-		t.Fatal("want error but got no errors")
-	}
-	if s := err.Error() ; s != "required -root" {
-		t.Errorf("unexpected error got=%s", s)
-	}
+	got := captureStderr(t, func() {
+		fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
+		err := upgradeCmd(fs, []string{"-root", ""})
+		if err == nil {
+			t.Errorf("want error but got no errors")
+			return
+		}
+		if s := err.Error(); s != "required -root" {
+			t.Errorf("unexpected error got=%s", s)
+		}
+	})
+	assertStderr(t, strings.Join([]string{
+		"  -all",
+		`    	clean all caches`,
+		"  -dryrun",
+		`    	don't switch, just test`,
+		"  -linkname string",
+		`    	name of symbolic link to switch (default "current")`,
+		"  -root string",
+		`    	root dir to install (default "D:\\Go")`,
+		""}, "\n"), got)
 }
 
 func TestUpgradeDryrun0(t *testing.T) {
