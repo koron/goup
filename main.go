@@ -8,12 +8,20 @@ import (
 	"github.com/koron/go-subcmd"
 )
 
+type stderrWrapWriter struct{}
+
+func (ww stderrWrapWriter) Write(b []byte) (int, error) {
+	return os.Stderr.Write(b)
+}
+
+var logWrirter stderrWrapWriter
+
 var (
 	debugEnable = false
-	debugLog    = log.New(os.Stderr, "[DEBUG] ", log.LstdFlags)
-	infoLog     = log.New(os.Stderr, "[INFO] ", log.LstdFlags)
-	warnLog     = log.New(os.Stderr, "[WARN] ", log.LstdFlags)
-	errorLog    = log.New(os.Stderr, "[ERROR] ", log.LstdFlags)
+	debugLog    = log.New(logWrirter, "[DEBUG] ", log.LstdFlags)
+	infoLog     = log.New(logWrirter, "", 0)
+	warnLog     = log.New(logWrirter, "[WARN] ", log.LstdFlags)
+	errorLog    = log.New(logWrirter, "[ERROR] ", log.LstdFlags)
 )
 
 func debugf(msg string, args ...interface{}) {

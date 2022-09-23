@@ -26,7 +26,7 @@ func TestUpgradeCmd(t *testing.T) {
 }
 
 func TestUpgradeCmdEmptyRoot(t *testing.T) {
-	got := captureStderr(t, func() {
+	_ = captureStderr(t, func() {
 		fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
 		err := upgradeCmd(fs, []string{"-root", ""})
 		if err == nil {
@@ -37,16 +37,7 @@ func TestUpgradeCmdEmptyRoot(t *testing.T) {
 			t.Errorf("unexpected error got=%s", s)
 		}
 	})
-	assertStderr(t, strings.Join([]string{
-		"  -all",
-		`    	clean all caches`,
-		"  -dryrun",
-		`    	don't switch, just test`,
-		"  -linkname string",
-		`    	name of symbolic link to switch (default "current")`,
-		"  -root string",
-		`    	root dir to install (default "D:\\Go")`,
-		""}, "\n"), got)
+	// don't check help output
 }
 
 func TestUpgradeDryrun0(t *testing.T) {
@@ -65,16 +56,25 @@ func TestUpgradeDryrun1(t *testing.T) {
 	goname := goName("go1.19")
 	err := os.MkdirAll(filepath.Join(root, goname), 0777)
 	if err != nil {
-		t.Fatal(err)
-		t.Fatalf("mkdir failed: %v", err)
+		t.Errorf("mkdir failed: %v", err)
+		return
 	}
 	err = switchGo(root, "current", goname)
 	if err != nil {
-		t.Fatalf("switch failed: %v", err)
+		t.Errorf("switch failed: %v", err)
+		return
 	}
-	err = upgrade(context.Background(), root, "current", true, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	got := captureStderr(t, func() {
+		fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
+		err = upgradeCmd(fs, []string{"-root", root, "-dryrun"})
+		if err != nil {
+			t.Error(err)
+		}
+	})
+	assertStderr(t, strings.Join([]string{
+		"upgraded Go go1.19.windows-amd64 to go1.19.1.windows-amd64",
+		""}, "\n"), got)
+
 	// FIXME: check result
 }
