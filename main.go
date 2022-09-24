@@ -72,7 +72,7 @@ func main() {
 
 var cmds = subcmd.Subcmds{
 	"remotelist": subcmd.Main2(remoteList),
-	"install":    subcmd.Main2(install),
+	"install":    subcmd.Main2(installCmd),
 	"uninstall":  subcmd.Main2(uninstallCmd),
 	"upgrade":    subcmd.Main2(upgradeCmd),
 	"list":       subcmd.Main2(localList),

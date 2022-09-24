@@ -17,7 +17,7 @@ import (
 	"github.com/koron/goup/tarx"
 )
 
-func install(fs *flag.FlagSet, args []string) error {
+func installCmd(fs *flag.FlagSet, args []string) error {
 	var root string
 	var force bool
 	var goos string
