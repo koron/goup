@@ -7,7 +7,7 @@ import (
 )
 
 func TestRemoteList(t *testing.T) {
-	got := testSubcmd(t, nil, func() {
+	got, _ := testSubcmd(t, nil, func() {
 		fs := flag.NewFlagSet("remotelist", flag.ContinueOnError)
 		err := remoteList(fs, nil)
 		if err != nil {
@@ -22,7 +22,7 @@ func TestRemoteList(t *testing.T) {
 }
 
 func TestRemoteListMatch(t *testing.T) {
-	got := testSubcmd(t, nil, func() {
+	got, _ := testSubcmd(t, nil, func() {
 		fs := flag.NewFlagSet("remotelist", flag.ContinueOnError)
 		err := remoteList(fs, []string{"-all", "-match", "1\\.18"})
 		if err != nil {

@@ -51,11 +51,7 @@ func localSwitch(fs *flag.FlagSet, args []string) error {
 	case 1:
 		// nothing
 	default:
-		fmt.Printf("Hit %d installations for %q:\n", len(list), target)
-		for _, g := range list {
-			fmt.Printf("  %s\n", g.name)
-		}
-		return fmt.Errorf("hit %d installations", len(list))
+		panic(fmt.Sprintf("hit %d installations for %q", len(list), target))
 	}
 	g := list[0]
 	fmt.Println(g.name)

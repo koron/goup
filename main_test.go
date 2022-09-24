@@ -13,8 +13,8 @@ import (
 	"github.com/koron/goup/internal/dltestsrv"
 )
 
-func testSubcmd(t *testing.T, s *dltestsrv.Server, fn func()) string {
-	return captureStdout(t, func() {
+func testSubcmd(t *testing.T, s *dltestsrv.Server, fn func()) (capturedOut, capturedErr string) {
+	return captureStdoutStderr(t, func() {
 		withDltestsrv(t, s, fn)
 	})
 }
@@ -31,6 +31,62 @@ func withDltestsrv(t *testing.T, s *dltestsrv.Server, fn func()) {
 		srv.Close()
 	}()
 	fn()
+}
+
+func captureStdoutStderr(t *testing.T, fn func()) (capturedOut, capturedErr string) {
+	t.Helper()
+
+	outR, outW, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("failed take over os.Stdout: %s", err)
+	}
+	stdout := os.Stdout
+	os.Stdout = outW
+	outC := make(chan string)
+	go func() {
+		var buf strings.Builder
+		_, err := io.Copy(&buf, outR)
+		outR.Close()
+		if err != nil {
+			t.Helper()
+			t.Errorf("goup testing: copying STDOUT pipe: %s", err)
+			return
+		}
+		outC <- buf.String()
+	}()
+	defer func() {
+		outW.Close()
+		os.Stdout = stdout
+		capturedOut = <-outC
+	}()
+
+	errR, errW, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("failed take over os.Stderr: %s", err)
+	}
+	stderr := os.Stderr
+	os.Stderr = errW
+	errC := make(chan string)
+	go func() {
+		var buf strings.Builder
+		_, err := io.Copy(&buf, errR)
+		errR.Close()
+		if err != nil {
+			t.Helper()
+			t.Errorf("goup testing: copying STDERR pipe: %s", err)
+			return
+		}
+		errC <- buf.String()
+	}()
+	defer func() {
+		errW.Close()
+		os.Stderr = stderr
+		capturedErr = <-errC
+	}()
+
+	fn()
+
+	return
 }
 
 func captureStdout(t *testing.T, fn func()) (out string) {
