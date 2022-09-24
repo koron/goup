@@ -10,7 +10,7 @@ import (
 	"runtime"
 )
 
-func uninstall(fs *flag.FlagSet, args []string) error {
+func uninstallCmd(fs *flag.FlagSet, args []string) error {
 	var root string
 	var goos string
 	var goarch string
