@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -65,7 +66,7 @@ func main() {
 	flag.Parse()
 	err := cmds.Run(flag.Args())
 	if err != nil {
-		errorf("failed: %s", err)
+		fmt.Fprintf(os.Stderr, "failed: %s\n", err)
 		os.Exit(1)
 	}
 }
