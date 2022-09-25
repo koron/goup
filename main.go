@@ -2,18 +2,27 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/koron/go-subcmd"
 )
 
+type stderrWrapWriter struct{}
+
+func (ww stderrWrapWriter) Write(b []byte) (int, error) {
+	return os.Stderr.Write(b)
+}
+
+var logWrirter stderrWrapWriter
+
 var (
 	debugEnable = false
-	debugLog    = log.New(os.Stderr, "[DEBUG]", log.LstdFlags)
-	infoLog     = log.New(os.Stderr, "[INFO]", log.LstdFlags)
-	warnLog     = log.New(os.Stderr, "[WARN]", log.LstdFlags)
-	errorLog    = log.New(os.Stderr, "[ERROR]", log.LstdFlags)
+	debugLog    = log.New(logWrirter, "[DEBUG] ", log.LstdFlags)
+	infoLog     = log.New(logWrirter, "", 0)
+	warnLog     = log.New(logWrirter, "[WARN] ", log.LstdFlags)
+	errorLog    = log.New(logWrirter, "[ERROR] ", log.LstdFlags)
 )
 
 func debugf(msg string, args ...interface{}) {
@@ -57,15 +66,16 @@ func main() {
 	flag.Parse()
 	err := cmds.Run(flag.Args())
 	if err != nil {
-		errorf("failed: %s", err)
+		fmt.Fprintf(os.Stderr, "failed: %s\n", err)
 		os.Exit(1)
 	}
 }
 
 var cmds = subcmd.Subcmds{
 	"remotelist": subcmd.Main2(remoteList),
-	"install":    subcmd.Main2(install),
-	"uninstall":  subcmd.Main2(uninstall),
+	"install":    subcmd.Main2(installCmd),
+	"uninstall":  subcmd.Main2(uninstallCmd),
+	"upgrade":    subcmd.Main2(upgradeCmd),
 	"list":       subcmd.Main2(localList),
 	"switch":     subcmd.Main2(localSwitch),
 	"clean":      subcmd.Main2(localClean),

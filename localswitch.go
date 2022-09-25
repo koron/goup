@@ -9,6 +9,7 @@ import (
 	"runtime"
 )
 
+// localSwitch switches "current" selected Go version.
 func localSwitch(fs *flag.FlagSet, args []string) error {
 	var root string
 	var goos string
@@ -50,11 +51,7 @@ func localSwitch(fs *flag.FlagSet, args []string) error {
 	case 1:
 		// nothing
 	default:
-		fmt.Printf("Hit %d installations for %q:\n", len(list), target)
-		for _, g := range list {
-			fmt.Printf("  %s\n", g.name)
-		}
-		return fmt.Errorf("hit %d installations", len(list))
+		panic(fmt.Sprintf("hit %d installations for %q", len(list), target))
 	}
 	g := list[0]
 	fmt.Println(g.name)
@@ -62,21 +59,24 @@ func localSwitch(fs *flag.FlagSet, args []string) error {
 		fmt.Fprintln(os.Stderr, "not installed because of dryrun")
 		return nil
 	}
+	return switchGo(root, linkname, g.name)
+}
 
+// switchGo switches/updates "current" symbolic link to goName.
+func switchGo(root, linkname, goName string) error {
 	dstdir := filepath.Join(root, linkname)
 	// remove dstdir (symbolic link)
-	_, err = os.Lstat(dstdir)
+	_, err := os.Lstat(dstdir)
 	if err == nil {
 		err := os.Remove(dstdir)
 		if err != nil {
 			return err
 		}
 	}
-
-	err = os.Symlink(g.name, dstdir)
+	// create a symbolic link
+	err = os.Symlink(goName, dstdir)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

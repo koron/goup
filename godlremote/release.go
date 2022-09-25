@@ -1,5 +1,7 @@
 package godlremote
 
+import "github.com/koron/goup/internal/verutil"
+
 // Release represents a release.
 // It should be kept in sync with the dl code in golang/website/internal/dl.
 //
@@ -8,6 +10,11 @@ type Release struct {
 	Version string `json:"version"`
 	Stable  bool   `json:"stable"`
 	Files   []File `json:"files"`
+}
+
+// Semver returns Version in semantic versioning notation.
+func (r Release) Semver() string {
+	return verutil.Regulate(r.Version)
 }
 
 // Releases is a collection of Release

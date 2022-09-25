@@ -1,24 +1,24 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
 
+	"github.com/koron/goup/internal/verutil"
 	"golang.org/x/mod/semver"
 )
 
+// localList lists all Go versions which locally installed.
 func localList(fs *flag.FlagSet, args []string) error {
 	var root string
 	var linkname string
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
-	fs.StringVar(&linkname, "linkname", "current", "name of symbolic link to switch")
+	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -47,16 +47,8 @@ func localList(fs *flag.FlagSet, args []string) error {
 	return nil
 }
 
-type installedGo struct {
-	version string
-	os      string
-	arch    string
-	name    string
-	semver  string
-}
-
-type installedGos []installedGo
-
+// localCurrent gets name of Go directory which is selected as "current"
+// version.
 func localCurrent(name string) (string, error) {
 	fi, err := os.Lstat(name)
 	if err != nil {
@@ -75,6 +67,16 @@ func localCurrent(name string) (string, error) {
 	return filepath.Base(rname), nil
 }
 
+type installedGo struct {
+	version string
+	os      string
+	arch    string
+	name    string
+	semver  string
+}
+
+type installedGos []installedGo
+
 func (list installedGos) filter(f func(installedGo) bool) installedGos {
 	var res installedGos
 	for _, g := range list {
@@ -87,8 +89,9 @@ func (list installedGos) filter(f func(installedGo) bool) installedGos {
 
 var rxGoDir = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:rc|beta|alpha)\d+)?)\.(\D[^-]*)-(.+)$`)
 
+// listInstalledGo lists installed Go verions.
 func listInstalledGo(root string) (installedGos, error) {
-	filist, err := ioutil.ReadDir(root)
+	filist, err := os.ReadDir(root)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +104,7 @@ func listInstalledGo(root string) (installedGos, error) {
 		if m == nil {
 			continue
 		}
-		ver := regulateVersion(m[1])
+		ver := verutil.Regulate(m[1])
 		if ver == "" {
 			continue
 		}
@@ -121,32 +124,4 @@ func listInstalledGo(root string) (installedGos, error) {
 		return list[i].semver > list[j].semver
 	})
 	return list, nil
-}
-
-var rxGoVer = regexp.MustCompile(`^go(?P<major>\d+)(?:\.(?P<minor>\d+)(?:\.(?P<patch>\d+))?)?(?P<pr>[A-Za-z][-.0-9A-Za-z]*)?`)
-
-func regnum(s string) string {
-	if s == "" {
-		return "0"
-	}
-	return s
-}
-
-func regulateVersion(s string) string {
-	m := rxGoVer.FindStringSubmatch(s)
-	if m == nil {
-		return ""
-	}
-	bb := &bytes.Buffer{}
-	bb.WriteRune('v')
-	bb.WriteString(regnum(m[1]))
-	bb.WriteRune('.')
-	bb.WriteString(regnum(m[2]))
-	bb.WriteRune('.')
-	bb.WriteString(regnum(m[3]))
-	if m[4] != "" {
-		bb.WriteRune('-')
-		bb.WriteString(m[4])
-	}
-	return bb.String()
 }

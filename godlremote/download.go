@@ -7,18 +7,23 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 )
 
-const dlURL = "https://go.dev/dl/"
+var DownloadBase = "https://go.dev/dl/"
 
 // Download downloads releases from go.dev/dl
 func Download(ctx context.Context, all bool) (Releases, error) {
-	return download(ctx, dlURL, all)
+	return download(ctx, DownloadBase, all)
 }
 
 func download(ctx context.Context, base string, all bool) (Releases, error) {
-	u := dlURL + "?mode=json"
+	u, err := url.JoinPath(base, "/")
+	if err != nil {
+		return nil, err
+	}
+	u = u + "?mode=json"
 	if all {
 		u += "&include=all"
 	}
@@ -60,7 +65,10 @@ func (f File) Download(ctx context.Context, name string, force bool) error {
 }
 
 func (f File) download(ctx context.Context, name string) error {
-	u := dlURL + f.Filename
+	u, err := url.JoinPath(DownloadBase, f.Filename)
+	if err != nil {
+		return err
+	}
 	req, err := http.NewRequestWithContext(ctx, "GET", u, nil)
 	if err != nil {
 		return err

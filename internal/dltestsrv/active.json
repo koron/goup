@@ -1,0 +1,122 @@
+[
+ {
+  "files": [
+   {
+    "arch": "amd64",
+    "filename": "go1.19.1.darwin-amd64.tar.gz",
+    "kind": "archive",
+    "os": "darwin",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.19.1"
+   },
+   {
+    "arch": "arm64",
+    "filename": "go1.19.1.darwin-arm64.tar.gz",
+    "kind": "archive",
+    "os": "darwin",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.19.1"
+   },
+   {
+    "arch": "amd64",
+    "filename": "go1.19.1.linux-amd64.tar.gz",
+    "kind": "archive",
+    "os": "linux",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.19.1"
+   },
+   {
+    "arch": "arm64",
+    "filename": "go1.19.1.linux-arm64.tar.gz",
+    "kind": "archive",
+    "os": "linux",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.19.1"
+   },
+   {
+    "arch": "amd64",
+    "filename": "go1.19.1.windows-amd64.zip",
+    "kind": "archive",
+    "os": "windows",
+    "sha256": "8e9938ebe3b0061a80813a183d353905c8e225db774611a7870ce561e1983520",
+    "size": 324,
+    "version": "go1.19.1"
+   },
+   {
+    "arch": "arm64",
+    "filename": "go1.19.1.windows-arm64.zip",
+    "kind": "archive",
+    "os": "windows",
+    "sha256": "8e9938ebe3b0061a80813a183d353905c8e225db774611a7870ce561e1983520",
+    "size": 324,
+    "version": "go1.19.1"
+   }
+  ],
+  "stable": true,
+  "version": "go1.19.1"
+ },
+ {
+  "files": [
+   {
+    "arch": "amd64",
+    "filename": "go1.18.6.darwin-amd64.tar.gz",
+    "kind": "archive",
+    "os": "darwin",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.18.6"
+   },
+   {
+    "arch": "arm64",
+    "filename": "go1.18.6.darwin-arm64.tar.gz",
+    "kind": "archive",
+    "os": "darwin",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.18.6"
+   },
+   {
+    "arch": "amd64",
+    "filename": "go1.18.6.linux-amd64.tar.gz",
+    "kind": "archive",
+    "os": "linux",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.18.6"
+   },
+   {
+    "arch": "arm64",
+    "filename": "go1.18.6.linux-arm64.tar.gz",
+    "kind": "archive",
+    "os": "linux",
+    "sha256": "fe46d97eb8d360f70e0d05fcb33c999dab0157ca480d44d03a0a1452b975079d",
+    "size": 144,
+    "version": "go1.18.6"
+   },
+   {
+    "arch": "amd64",
+    "filename": "go1.18.6.windows-amd64.zip",
+    "kind": "archive",
+    "os": "windows",
+    "sha256": "8e9938ebe3b0061a80813a183d353905c8e225db774611a7870ce561e1983520",
+    "size": 324,
+    "version": "go1.18.6"
+   },
+   {
+    "arch": "arm64",
+    "filename": "go1.18.6.windows-arm64.zip",
+    "kind": "archive",
+    "os": "windows",
+    "sha256": "8e9938ebe3b0061a80813a183d353905c8e225db774611a7870ce561e1983520",
+    "size": 324,
+    "version": "go1.18.6"
+   }
+  ],
+  "stable": true,
+  "version": "go1.18.6"
+ }
+]
