@@ -41,6 +41,12 @@ var cleanCommand = subcmd.DefineCommand("clean", "clean download caches", func(c
 	return localClean(context2flagset(ctx), args)
 })
 
+var binSet = subcmd.DefineSet("bin", "operate executables in GOBIN dir",
+	subcmd.DefineCommand("list", "list executables in GOBIN", func(ctx context.Context, args []string) error {
+		return binaryList(context2flagset(ctx), args)
+	}),
+)
+
 var rootCommandSet = subcmd.DefineRootSet(
 	remotelistCommand, // remotelist
 	installCommand,    // install
@@ -49,4 +55,5 @@ var rootCommandSet = subcmd.DefineRootSet(
 	listCommand,       // list
 	switchCommand,     // switch
 	cleanCommand,      // clean
+	binSet,            // bin
 )
