@@ -79,4 +79,7 @@ var cmds = subcmd.Subcmds{
 	"list":       subcmd.Main2(localList),
 	"switch":     subcmd.Main2(localSwitch),
 	"clean":      subcmd.Main2(localClean),
+	"bin": subcmd.Subcmds{
+		"list": subcmd.Main2(binaryList),
+	},
 }
