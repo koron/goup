@@ -22,6 +22,7 @@ var rootCommandSet = subcmd.DefineRootSet(
 	list.Command,       // list
 	switchgo.Command,   // switch
 	clean.Command,      // clean
+	binSet,             // bin
 )
 
 func main() {
