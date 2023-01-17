@@ -68,8 +68,9 @@ func TestUpgradeDryrun1(t *testing.T) {
 			t.Error(err)
 		}
 	})
+	// XXX: make independent to real Go releases.
 	assertStderr(t, strings.Join([]string{
-		"upgraded Go go1.19.windows-amd64 to go1.19.1.windows-amd64",
+		"upgraded Go go1.19.windows-amd64 to go1.19.5.windows-amd64",
 		""}, "\n"), got)
 
 	// FIXME: check result
