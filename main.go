@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/koron/go-subcmd"
+	"github.com/koron-go/subcmd"
 )
 
 type stderrWrapWriter struct{}
@@ -64,19 +64,9 @@ func envGoupLinkname() string {
 func main() {
 	flag.BoolVar(&debugEnable, "debug", false, "enable debug log")
 	flag.Parse()
-	err := cmds.Run(flag.Args())
+	err := subcmd.Run(rootCommandSet, flag.Args()...)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed: %s\n", err)
 		os.Exit(1)
 	}
-}
-
-var cmds = subcmd.Subcmds{
-	"remotelist": subcmd.Main2(remoteList),
-	"install":    subcmd.Main2(installCmd),
-	"uninstall":  subcmd.Main2(uninstallCmd),
-	"upgrade":    subcmd.Main2(upgradeCmd),
-	"list":       subcmd.Main2(localList),
-	"switch":     subcmd.Main2(localSwitch),
-	"clean":      subcmd.Main2(localClean),
 }

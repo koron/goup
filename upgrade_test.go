@@ -49,7 +49,7 @@ func TestUpgradeDryrun0(t *testing.T) {
 func TestUpgradeDryrun1(t *testing.T) {
 	// an upgrade detected, it is "current"
 	root := t.TempDir()
-	goname := "go1.19.windows-amd64"
+	goname := "go1.22.0.windows-amd64"
 	err := os.MkdirAll(filepath.Join(root, goname), 0777)
 	if err != nil {
 		t.Errorf("mkdir failed: %v", err)
@@ -70,7 +70,7 @@ func TestUpgradeDryrun1(t *testing.T) {
 	})
 	// XXX: make independent to real Go releases.
 	assertStderr(t, strings.Join([]string{
-		"upgraded Go go1.19.windows-amd64 to go1.19.5.windows-amd64",
+		"upgraded Go go1.22.0.windows-amd64 to go1.22.1.windows-amd64",
 		""}, "\n"), got)
 
 	// FIXME: check result
@@ -97,9 +97,9 @@ func TestDebugInstalledGos(t *testing.T) {
 }
 
 func TestDebugLatestReleases(t *testing.T) {
-	rels := map [string]latestRelease{
-		"v1.18": latestRelease{semver: "v1.18.6"},
-		"v1.19": latestRelease{semver: "v1.19.1"},
+	rels := map[string]latestRelease{
+		"v1.18": {semver: "v1.18.6"},
+		"v1.19": {semver: "v1.19.1"},
 	}
 	want := strings.Join([]string{
 		"",
