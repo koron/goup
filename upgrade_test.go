@@ -97,9 +97,9 @@ func TestDebugInstalledGos(t *testing.T) {
 }
 
 func TestDebugLatestReleases(t *testing.T) {
-	rels := map [string]latestRelease{
-		"v1.18": latestRelease{semver: "v1.18.6"},
-		"v1.19": latestRelease{semver: "v1.19.1"},
+	rels := map[string]latestRelease{
+		"v1.18": {semver: "v1.18.6"},
+		"v1.19": {semver: "v1.19.1"},
 	}
 	want := strings.Join([]string{
 		"",

@@ -59,7 +59,7 @@ func (uni uninstaller) uninstall(ctx context.Context, ver string) error {
 	var deleted bool
 	name := fmt.Sprintf("%s.%s-%s", ver, uni.goos, uni.goarch)
 	dir := filepath.Join(uni.rootdir, name)
-	ok ,err := uni.hasDir(dir)
+	ok, err := uni.hasDir(dir)
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func (uni uninstaller) uninstall(ctx context.Context, ver string) error {
 	return nil
 }
 
-func (uni uninstaller) hasDir(name string) (bool , error) {
+func (uni uninstaller) hasDir(name string) (bool, error) {
 	fi, err := os.Lstat(name)
 	if err != nil {
 		if os.IsNotExist(err) {
