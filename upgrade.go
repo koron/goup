@@ -59,7 +59,7 @@ func upgradeCmd(fs *flag.FlagSet, args []string) error {
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
-	fs.BoolVar(&all, "all", false, "clean all caches")
+	fs.BoolVar(&all, "all", false, "update all Go installations")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
