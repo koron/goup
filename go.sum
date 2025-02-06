@@ -1,10 +1,10 @@
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/koron-go/subcmd v0.0.2 h1:yo3QR7ys/DwhRmHZeyEDwxwFl0P/FSZdze9tjscdCWo=
-github.com/koron-go/subcmd v0.0.2/go.mod h1:7yYPwJuVmG9D5xOjxUVlPfRmcAqj6mT76+tWDyjrJGs=
+github.com/koron-go/subcmd v0.0.3 h1:Jh7eyPwPBixKfXXhIsWoPOIJ8FGc3nAtN9WUIgApCmI=
+github.com/koron-go/subcmd v0.0.3/go.mod h1:7yYPwJuVmG9D5xOjxUVlPfRmcAqj6mT76+tWDyjrJGs=
 github.com/koron-go/zipx v1.2.0 h1:GfLaSiHehU4/Hhf4SwE0ue4VntIFnRBTZcvF0CYGn/A=
 github.com/koron-go/zipx v1.2.0/go.mod h1:J2Azg7lSFzXyOk1mlLqrVyYN/w1eCLcDvvO9zxM3AiM=
-golang.org/x/mod v0.21.0 h1:vvrHzRwRfVKSiLrG+d4FMl/Qi4ukBCE6kZlTUkDYRT0=
-golang.org/x/mod v0.21.0/go.mod h1:6SkKJ3Xj0I0BrPOZoBy3bdMptDDU9oJrpohJ3eWZ1fY=
-golang.org/x/sync v0.8.0 h1:3NFvSEYkUoMifnESzZl15y791HH1qU2xm6eCJU5ZPXQ=
-golang.org/x/sync v0.8.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+golang.org/x/mod v0.23.0 h1:Zb7khfcRGKk+kqfxFaP5tZqCnDZMjC5VtUBs87Hr6QM=
+golang.org/x/mod v0.23.0/go.mod h1:6SkKJ3Xj0I0BrPOZoBy3bdMptDDU9oJrpohJ3eWZ1fY=
+golang.org/x/sync v0.11.0 h1:GGz8+XQP4FvTTrjZPzNKTMFtSXH80RAzG+5ghFPgK9w=
+golang.org/x/sync v0.11.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
