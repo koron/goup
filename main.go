@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/koron-go/subcmd"
+	"github.com/koron/goup/internal/subcmd/clean"
 	"github.com/koron/goup/internal/subcmd/install"
 	"github.com/koron/goup/internal/subcmd/list"
 	"github.com/koron/goup/internal/subcmd/remotelist"
@@ -68,7 +69,7 @@ var rootCommandSet = subcmd.DefineRootSet(
 	upgradeCommand,     // upgrade
 	list.Command,       // list
 	switch_.Command,    // switch
-	cleanCommand,       // clean
+	clean.Command,      // clean
 )
 
 func main() {

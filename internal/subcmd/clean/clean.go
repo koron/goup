@@ -1,4 +1,4 @@
-package main
+package clean
 
 import (
 	"context"
@@ -9,16 +9,17 @@ import (
 	"regexp"
 
 	"github.com/koron-go/subcmd"
+	"github.com/koron/goup/internal/common"
 )
 
 var rxGoArchive = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:rc|beta|alpha)\d+)?\.\D[^-]*-.+)\.(?:zip|tar\.gz)$`)
 
-var cleanCommand = subcmd.DefineCommand("clean", "clean download caches", func(ctx context.Context, args []string) error {
+var Command = subcmd.DefineCommand("clean", "clean download caches", func(ctx context.Context, args []string) error {
 	var root string
 	var dryrun bool
 	var all bool
 	fs := subcmd.FlagSet(ctx)
-	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
+	fs.StringVar(&root, "root", common.GoupRoot(), "root dir to install")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
 	fs.BoolVar(&all, "all", false, "clean all caches")
 	if err := fs.Parse(args); err != nil {
