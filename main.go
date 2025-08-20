@@ -22,7 +22,6 @@ var (
 	debugLog    = log.New(logWrirter, "[DEBUG] ", log.LstdFlags)
 	infoLog     = log.New(logWrirter, "", 0)
 	warnLog     = log.New(logWrirter, "[WARN] ", log.LstdFlags)
-	errorLog    = log.New(logWrirter, "[ERROR] ", log.LstdFlags)
 )
 
 func debugf(msg string, args ...interface{}) {
@@ -38,10 +37,6 @@ func infof(msg string, args ...interface{}) {
 
 func warnf(msg string, args ...interface{}) {
 	warnLog.Printf(msg, args...)
-}
-
-func errorf(msg string, args ...interface{}) {
-	errorLog.Printf(msg, args...)
 }
 
 func envGoupRoot() string {

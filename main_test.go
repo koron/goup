@@ -15,7 +15,9 @@ import (
 )
 
 func testSubcmd(t *testing.T, s *dltestsrv.Server, fn func(context.Context)) (capturedOut, capturedErr string) {
+	t.Helper()
 	return captureStdoutStderr(t, func() {
+		t.Helper()
 		if s == nil {
 			s = &dltestsrv.Server{}
 		}
@@ -82,70 +84,12 @@ func captureStdoutStderr(t *testing.T, fn func()) (capturedOut, capturedErr stri
 	return
 }
 
-func captureStdout(t *testing.T, fn func()) (out string) {
-	stdout := os.Stdout
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Helper()
-		t.Fatalf("failed take over os.Stdout: %s", err)
-	}
-	os.Stdout = w
-	outC := make(chan string)
-	go func() {
-		var buf strings.Builder
-		_, err := io.Copy(&buf, r)
-		r.Close()
-		if err != nil {
-			t.Helper()
-			t.Errorf("goup testing: copying pipe: %s", err)
-			return
-		}
-		outC <- buf.String()
-	}()
-	defer func() {
-		w.Close()
-		os.Stdout = stdout
-		out = <-outC
-	}()
-	fn()
-	return
-}
-
 func assertStdout(t *testing.T, want, got string) {
 	d := cmp.Diff(want, got)
 	if d != "" {
 		t.Helper()
 		t.Errorf("unexpected stdout: -want +got\n%s", d)
 	}
-}
-
-func captureStderr(t *testing.T, fn func()) (out string) {
-	stdout := os.Stderr
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Helper()
-		t.Fatalf("failed take over os.Stderr: %s", err)
-	}
-	os.Stderr = w
-	outC := make(chan string)
-	go func() {
-		var buf strings.Builder
-		_, err := io.Copy(&buf, r)
-		r.Close()
-		if err != nil {
-			t.Helper()
-			t.Errorf("goup testing: copying pipe: %s", err)
-			return
-		}
-		outC <- buf.String()
-	}()
-	defer func() {
-		w.Close()
-		os.Stderr = stdout
-		out = <-outC
-	}()
-	fn()
-	return
 }
 
 func assertStderr(t *testing.T, want, got string) {
@@ -172,13 +116,6 @@ func assertErr(t *testing.T, err error, want string) {
 	}
 	if got := err.Error(); want != got {
 		t.Fatalf("an operation is failed with unexpected error:\nwant=%s\ngot=%s", want, got)
-	}
-}
-
-func assertNoErr(t *testing.T, err error) {
-	if err != nil {
-		t.Helper()
-		t.Fatalf("an operation failed: %s", err)
 	}
 }
 

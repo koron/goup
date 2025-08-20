@@ -21,8 +21,7 @@ func TestUpgradeCmd(t *testing.T) {
 }
 
 func TestUpgradeCmdEmptyRoot(t *testing.T) {
-	_ = captureStderr(t, func() {
-		ctx := context.Background()
+	_, _ = testSubcmd(t, nil, func(ctx context.Context) {
 		err := upgradeCommand.Run(ctx, []string{"-root", ""})
 		if err == nil {
 			t.Errorf("want error but got no errors")
