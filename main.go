@@ -9,6 +9,7 @@ import (
 	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/internal/subcmd/install"
 	"github.com/koron/goup/internal/subcmd/remotelist"
+	"github.com/koron/goup/internal/subcmd/uninstall"
 )
 
 type stderrWrapWriter struct{}
@@ -61,7 +62,7 @@ func envGoupLinkname() string {
 var rootCommandSet = subcmd.DefineRootSet(
 	remotelist.Command, // remotelist
 	install.Command,    // install
-	uninstallCommand,   // uninstall
+	uninstall.Command,  // uninstall
 	upgradeCommand,     // upgrade
 	listCommand,        // list
 	switchCommand,      // switch

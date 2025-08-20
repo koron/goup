@@ -92,17 +92,48 @@ func AssertStdout(t *testing.T, want, got string) {
 	}
 }
 
+func AssertStderr(t *testing.T, want, got string) {
+	d := cmp.Diff(want, got)
+	if d != "" {
+		t.Helper()
+		t.Errorf("unexpected stderr: -want +got\n%s", d)
+	}
+}
+
 // AssertGodir checkk installed Go directory
 func AssertGodir(t *testing.T, root, goname string) {
 	t.Helper()
 	godir := filepath.Join(root, goname)
-	assertIsExist(t, godir, true)
-	assertIsExist(t, filepath.Join(godir, "README.txt"), false)
+	AssertIsExist(t, godir, true)
+	AssertIsExist(t, filepath.Join(godir, "README.txt"), false)
 	// more checks in future. need to files and dirs adding to dummy archives.
 }
 
-// assertIsExist checks a file/dir is exist
-func assertIsExist(t *testing.T, name string, isDir bool) {
+func AssertErr(t *testing.T, err error, want string) {
+	t.Helper()
+	if err == nil {
+		t.Fatal("an operation is succeeded, unexpectedly")
+	}
+	if got := err.Error(); want != got {
+		t.Fatalf("an operation is failed with unexpected error:\nwant=%s\ngot=%s", want, got)
+	}
+}
+
+// AssertIsNotExist checks a file/dir is not exist
+func AssertIsNotExist(t *testing.T, name string) {
+	_, err := os.Stat(name)
+	if err != nil && os.IsNotExist(err) {
+		return
+	}
+	t.Helper()
+	if err == nil {
+		t.Fatalf("a file/dir is exist, unexpectedly: %s", name)
+	}
+	t.Fatalf("unexpected os.Stat failure: %s", err)
+}
+
+// AssertIsExist checks a file/dir is exist
+func AssertIsExist(t *testing.T, name string, isDir bool) {
 	t.Helper()
 	fi, err := os.Stat(name)
 	if err != nil {
@@ -115,4 +146,33 @@ func assertIsExist(t *testing.T, name string, isDir bool) {
 			t.Fatalf("a path %s is not a file", name)
 		}
 	}
+}
+
+// AssertMkdirAll creates a dir with parent directories.
+func AssertMkdirAll(t *testing.T, name string) {
+	t.Helper()
+	err := os.MkdirAll(name, 0755)
+	if err != nil {
+		t.Fatalf("failed to make directory: %s", err)
+	}
+	AssertIsExist(t, name, true)
+}
+
+// AssertTouchFile creates a file with parent directories.
+func AssertTouchFile(t *testing.T, name string) {
+	t.Helper()
+	dir := filepath.Dir(name)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		t.Fatalf("failed to create parent directories %s: %s", dir, err)
+	}
+	f, err := os.Create(name)
+	if err != nil {
+		t.Fatalf("failed to create a file %s: %s", name, err)
+	}
+	err = f.Close()
+	if err != nil {
+		t.Fatalf("failed to close a file %s: %s", name, err)
+	}
+	AssertIsExist(t, name, false)
 }

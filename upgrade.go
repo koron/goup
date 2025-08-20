@@ -11,13 +11,14 @@ import (
 	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/godlremote"
 	"github.com/koron/goup/internal/subcmd/install"
+	"github.com/koron/goup/internal/subcmd/uninstall"
 	"golang.org/x/mod/semver"
 )
 
 type upgrader interface {
 	install(ctx context.Context, ins install.Installer, ver string) error
 	setCurrent(root, linkname, installedName string) error
-	uninstall(ctx context.Context, uni uninstaller, ver string) error
+	uninstall(ctx context.Context, uni uninstall.Uninstaller, ver string) error
 }
 
 type upgraderActual struct{}
@@ -30,8 +31,8 @@ func (ua upgraderActual) setCurrent(root, linkname, installedName string) error 
 	return switchGo(root, linkname, installedName)
 }
 
-func (ua upgraderActual) uninstall(ctx context.Context, uni uninstaller, ver string) error {
-	return uni.uninstall(ctx, ver)
+func (ua upgraderActual) uninstall(ctx context.Context, uni uninstall.Uninstaller, ver string) error {
+	return uni.Uninstall(ctx, ver)
 }
 
 type upgraderRehearsal struct{}
@@ -46,7 +47,7 @@ func (ur upgraderRehearsal) setCurrent(root, linkname, installedName string) err
 	return nil
 }
 
-func (ur upgraderRehearsal) uninstall(ctx context.Context, uni uninstaller, ver string) error {
+func (ur upgraderRehearsal) uninstall(ctx context.Context, uni uninstall.Uninstaller, ver string) error {
 	debugf("DRYRUN: uninstall Go %s", ver)
 	return nil
 }
@@ -153,11 +154,11 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 		}
 
 		// clean old version
-		uni := uninstaller{
-			rootdir: root,
-			goos:    target.local.os,
-			goarch:  target.local.arch,
-			clean:   false,
+		uni := uninstall.Uninstaller{
+			RootDir: root,
+			GOOS:    target.local.os,
+			GOARCH:  target.local.arch,
+			Clean:   false,
 		}
 		err = upg.uninstall(ctx, uni, target.local.version)
 		if err != nil {

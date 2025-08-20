@@ -1,59 +1,61 @@
-package main
+package uninstall
 
 import (
 	"context"
 	"path/filepath"
 	"testing"
+
+	"github.com/koron/goup/internal/testutil"
 )
 
 func TestUninstall(t *testing.T) {
 	root := t.TempDir()
 	godir := filepath.Join(root, "go1.18.6.windows-amd64")
-	assertMkdirAll(t, godir)
+	testutil.AssertMkdirAll(t, godir)
 	// uninstall
-	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
-		err := uninstallCommand.Run(ctx, []string{
+	out, _ := testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6",
 		})
 		if err != nil {
 			t.Errorf("uninstall failed: %s", err)
 		}
 	})
-	assertStdout(t, "", out)
-	assertIsNotExist(t, godir)
+	testutil.AssertStdout(t, "", out)
+	testutil.AssertIsNotExist(t, godir)
 }
 
 func TestUninstallInvalid(t *testing.T) {
 	root := t.TempDir()
 	godir := filepath.Join(root, "go1.18.6.windows-amd64")
-	assertIsNotExist(t, godir)
+	testutil.AssertIsNotExist(t, godir)
 	// uninstall
-	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
-		err := uninstallCommand.Run(ctx, []string{
+	out, _ := testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6",
 		})
-		assertErr(t, err, "no deleted files for go1.18.6.windows-amd64")
+		testutil.AssertErr(t, err, "no deleted files for go1.18.6.windows-amd64")
 	})
-	assertStdout(t, "", out)
-	assertIsNotExist(t, godir)
+	testutil.AssertStdout(t, "", out)
+	testutil.AssertIsNotExist(t, godir)
 }
 
 func TestUninstallClean(t *testing.T) {
 	root := t.TempDir()
 	godir := filepath.Join(root, "go1.18.6.windows-amd64")
-	assertMkdirAll(t, godir)
+	testutil.AssertMkdirAll(t, godir)
 	dlfile := filepath.Join(root, "dl", "go1.18.6.windows-amd64.zip")
-	assertTouchFile(t, dlfile)
+	testutil.AssertTouchFile(t, dlfile)
 	// uninstall
-	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
-		err := uninstallCommand.Run(ctx, []string{
+	out, _ := testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "-clean", "go1.18.6",
 		})
 		if err != nil {
 			t.Errorf("uninstall failed: %s", err)
 		}
 	})
-	assertStdout(t, "", out)
-	assertIsNotExist(t, godir)
-	assertIsNotExist(t, dlfile)
+	testutil.AssertStdout(t, "", out)
+	testutil.AssertIsNotExist(t, godir)
+	testutil.AssertIsNotExist(t, dlfile)
 }

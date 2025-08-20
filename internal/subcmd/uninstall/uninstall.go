@@ -1,4 +1,4 @@
-package main
+package uninstall
 
 import (
 	"context"
@@ -9,15 +9,18 @@ import (
 	"runtime"
 
 	"github.com/koron-go/subcmd"
+	"github.com/koron/goup/internal/common"
 )
 
-var uninstallCommand = subcmd.DefineCommand("uninstall", "uninstall Go releases", func(ctx context.Context, args []string) error {
-	var root string
-	var goos string
-	var goarch string
-	var clean bool
+var Command = subcmd.DefineCommand("uninstall", "uninstall Go releases", func(ctx context.Context, args []string) error {
+	var (
+		root   string
+		goos   string
+		goarch string
+		clean  bool
+	)
 	fs := subcmd.FlagSet(ctx)
-	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
+	fs.StringVar(&root, "root", common.GoupRoot(), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")
 	fs.BoolVar(&clean, "clean", false, "clean distfiles")
@@ -34,14 +37,14 @@ var uninstallCommand = subcmd.DefineCommand("uninstall", "uninstall Go releases"
 		return errors.New("no versions to install")
 	}
 
-	uni := uninstaller{
-		rootdir: root,
-		goos:    goos,
-		goarch:  goarch,
-		clean:   clean,
+	uni := Uninstaller{
+		RootDir: root,
+		GOOS:    goos,
+		GOARCH:  goarch,
+		Clean:   clean,
 	}
 	for _, ver := range versions {
-		err := uni.uninstall(ctx, ver)
+		err := uni.Uninstall(ctx, ver)
 		if err != nil {
 			return err
 		}
@@ -49,17 +52,17 @@ var uninstallCommand = subcmd.DefineCommand("uninstall", "uninstall Go releases"
 	return nil
 })
 
-type uninstaller struct {
-	rootdir string
-	goos    string
-	goarch  string
-	clean   bool
+type Uninstaller struct {
+	RootDir string
+	GOOS    string
+	GOARCH  string
+	Clean   bool
 }
 
-func (uni uninstaller) uninstall(ctx context.Context, ver string) error {
+func (uni Uninstaller) Uninstall(ctx context.Context, ver string) error {
 	var deleted bool
-	name := fmt.Sprintf("%s.%s-%s", ver, uni.goos, uni.goarch)
-	dir := filepath.Join(uni.rootdir, name)
+	name := fmt.Sprintf("%s.%s-%s", ver, uni.GOOS, uni.GOARCH)
+	dir := filepath.Join(uni.RootDir, name)
 	ok, err := uni.hasDir(dir)
 	if err != nil {
 		return err
@@ -72,8 +75,8 @@ func (uni uninstaller) uninstall(ctx context.Context, ver string) error {
 		deleted = true
 	}
 	// remove distributed files.
-	if uni.clean {
-		pat := filepath.Join(uni.rootdir, "dl", name+".*")
+	if uni.Clean {
+		pat := filepath.Join(uni.RootDir, "dl", name+".*")
 		paths, err := filepath.Glob(pat)
 		if err != nil {
 			return err
@@ -92,7 +95,7 @@ func (uni uninstaller) uninstall(ctx context.Context, ver string) error {
 	return nil
 }
 
-func (uni uninstaller) hasDir(name string) (bool, error) {
+func (uni Uninstaller) hasDir(name string) (bool, error) {
 	fi, err := os.Lstat(name)
 	if err != nil {
 		if os.IsNotExist(err) {
