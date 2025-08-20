@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/godlremote"
 	"golang.org/x/mod/semver"
 )
@@ -57,7 +58,7 @@ func upgradeCmd(ctx context.Context, args []string) error {
 		dryrun   bool
 		all      bool
 	)
-	fs := context2flagset(ctx)
+	fs := subcmd.FlagSet(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")

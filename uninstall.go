@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/koron-go/subcmd"
 )
 
 func uninstallCmd(ctx context.Context, args []string) error {
@@ -14,7 +16,7 @@ func uninstallCmd(ctx context.Context, args []string) error {
 	var goos string
 	var goarch string
 	var clean bool
-	fs := context2flagset(ctx)
+	fs := subcmd.FlagSet(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")

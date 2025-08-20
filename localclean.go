@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/koron-go/subcmd"
 )
 
 var rxGoArchive = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:rc|beta|alpha)\d+)?\.\D[^-]*-.+)\.(?:zip|tar\.gz)$`)
@@ -16,7 +18,7 @@ func localClean(ctx context.Context, args []string) error {
 	var root string
 	var dryrun bool
 	var all bool
-	fs := context2flagset(ctx)
+	fs := subcmd.FlagSet(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
 	fs.BoolVar(&all, "all", false, "clean all caches")

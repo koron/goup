@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/koron-go/subcmd"
 	"github.com/koron-go/zipx"
 	"github.com/koron/goup/godlremote"
 	"github.com/koron/goup/tarx"
@@ -21,7 +22,7 @@ func installCmd(ctx context.Context, args []string) error {
 	var force bool
 	var goos string
 	var goarch string
-	fs := context2flagset(ctx)
+	fs := subcmd.FlagSet(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.BoolVar(&force, "force", false, "override installation")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")

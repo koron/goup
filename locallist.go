@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"sort"
 
+	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/internal/verutil"
 	"golang.org/x/mod/semver"
 )
@@ -17,7 +18,7 @@ import (
 func localList(ctx context.Context, args []string) error {
 	var root string
 	var linkname string
-	fs := context2flagset(ctx)
+	fs := subcmd.FlagSet(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	if err := fs.Parse(args); err != nil {

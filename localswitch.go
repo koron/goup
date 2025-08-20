@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/koron-go/subcmd"
 )
 
 // localSwitch switches "current" selected Go version.
@@ -16,7 +18,7 @@ func localSwitch(ctx context.Context, args []string) error {
 	var goarch string
 	var dryrun bool
 	var linkname string
-	fs := context2flagset(ctx)
+	fs := subcmd.FlagSet(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")

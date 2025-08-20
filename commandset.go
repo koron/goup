@@ -1,17 +1,8 @@
 package main
 
 import (
-	"context"
-	"flag"
-	"strings"
-
 	"github.com/koron-go/subcmd"
 )
-
-func context2flagset(ctx context.Context) *flag.FlagSet {
-	name := strings.Join(subcmd.Names(ctx), " ")
-	return flag.NewFlagSet(name, flag.ExitOnError)
-}
 
 var remotelistCommand = subcmd.DefineCommand("remotelist", "list published releases", remoteList)
 
