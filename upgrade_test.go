@@ -66,8 +66,9 @@ func TestUpgradeDryrun1(t *testing.T) {
 		return
 	}
 
+	// Start HTTP server to server dummy release list.
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		f, err := os.Open(filepath.Join("testdata", "list-20250820.json"))
+		f, err := os.Open("testdata/list-20250820.json")
 		if err != nil {
 			t.Errorf("failed open a file: %s", err)
 			return
@@ -86,9 +87,8 @@ func TestUpgradeDryrun1(t *testing.T) {
 			t.Error(err)
 		}
 	})
-	// XXX: make independent to real Go releases.
 	assertStderr(t, strings.Join([]string{
-		"upgraded Go go1.24.0.windows-amd64 to go1.24.5.windows-amd64",
+		"upgraded Go go1.24.0.windows-amd64 to go1.24.6.windows-amd64",
 		""}, "\n"), got)
 
 	// FIXME: check result
