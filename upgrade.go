@@ -10,6 +10,7 @@ import (
 
 	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/godlremote"
+	"github.com/koron/goup/internal/common"
 	"github.com/koron/goup/internal/subcmd/install"
 	"github.com/koron/goup/internal/subcmd/uninstall"
 	"golang.org/x/mod/semver"
@@ -79,7 +80,7 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 	debugf("upgrade processing...")
 
 	// list local versions.
-	installed, err := listInstalledGo(root)
+	installed, err := common.ListInstalledGo(root)
 	if err != nil {
 		return fmt.Errorf("failed to list installed Go: %w", err)
 	}
@@ -93,7 +94,7 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 	latests := groupReleases(rels)
 	debugf("found releases: %s", debugLatestReleases(latests))
 
-	currName, err := localCurrent(filepath.Join(root, linkname))
+	currName, err := common.LocalCurrent(filepath.Join(root, linkname))
 	if err != nil {
 		return fmt.Errorf("failed to determine \"current\" version: %w", err)
 	}
@@ -101,14 +102,14 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 	// compare versions, determine versions to be upgraded
 	upgrades := make([]upgradePlan, 0, len(installed))
 	for _, local := range installed {
-		latest, ok := latests[shrinkVersion(local.semver)]
-		if !ok || semver.Compare(latest.semver, local.semver) <= 0 {
+		latest, ok := latests[shrinkVersion(local.Semver)]
+		if !ok || semver.Compare(latest.semver, local.Semver) <= 0 {
 			continue
 		}
 		upgrades = append(upgrades, upgradePlan{
 			local:  local,
 			remote: latest,
-			curr:   currName != "" && local.name == currName,
+			curr:   currName != "" && local.Name == currName,
 		})
 	}
 	if len(upgrades) == 0 {
@@ -123,15 +124,15 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 
 	// repeat versions to be upgraded
 	for _, target := range upgrades {
-		debugf("upgrading Go %s", target.local.name)
+		debugf("upgrading Go %s", target.local.Name)
 
 		// install new version
 		ins := install.Installer{
 			Releases: godlremote.Releases{target.remote.origin},
 			RootDir:  root,
 			Force:    false,
-			GOOS:     target.local.os,
-			GOARCH:   target.local.arch,
+			GOOS:     target.local.OS,
+			GOARCH:   target.local.Arch,
 		}
 		ver := target.remote.origin.Version
 		archiveFile, ok := ins.ArchiveFile(ver)
@@ -156,22 +157,22 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 		// clean old version
 		uni := uninstall.Uninstaller{
 			RootDir: root,
-			GOOS:    target.local.os,
-			GOARCH:  target.local.arch,
+			GOOS:    target.local.OS,
+			GOARCH:  target.local.Arch,
 			Clean:   false,
 		}
-		err = upg.uninstall(ctx, uni, target.local.version)
+		err = upg.uninstall(ctx, uni, target.local.Version)
 		if err != nil {
-			return fmt.Errorf("failed to uinstall Go %s: %w", target.local.name, err)
+			return fmt.Errorf("failed to uinstall Go %s: %w", target.local.Name, err)
 		}
-		infof("upgraded Go %s to %s", target.local.name, installedName)
+		infof("upgraded Go %s to %s", target.local.Name, installedName)
 	}
 
 	return nil
 }
 
 type upgradePlan struct {
-	local  installedGo
+	local  common.InstalledGo
 	remote latestRelease
 	curr   bool
 }
@@ -205,12 +206,12 @@ func groupReleases(releases godlremote.Releases) map[string]latestRelease {
 	return m
 }
 
-type debugInstalledGos installedGos
+type debugInstalledGos common.InstalledGos
 
 func (d debugInstalledGos) String() string {
 	bb := &bytes.Buffer{}
 	for _, g := range d {
-		bb.WriteString("\n\t" + g.name)
+		bb.WriteString("\n\t" + g.Name)
 	}
 	return bb.String()
 }

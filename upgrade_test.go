@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/koron/goup/internal/common"
 )
 
 func TestUpgradeCmd(t *testing.T) {
@@ -75,11 +76,11 @@ func TestUpgradeDryrun1(t *testing.T) {
 }
 
 func TestDebugInstalledGos(t *testing.T) {
-	list := installedGos{
-		installedGo{version: "1", os: "windows", arch: "amd64", name: "foo"},
-		installedGo{version: "2", os: "windows", arch: "amd64", name: "bar"},
-		installedGo{version: "3", os: "windows", arch: "amd64", name: "baz"},
-		installedGo{version: "4", os: "windows", arch: "amd64", name: "qux"},
+	list := common.InstalledGos{
+		common.InstalledGo{Version: "1", OS: "windows", Arch: "amd64", Name: "foo"},
+		common.InstalledGo{Version: "2", OS: "windows", Arch: "amd64", Name: "bar"},
+		common.InstalledGo{Version: "3", OS: "windows", Arch: "amd64", Name: "baz"},
+		common.InstalledGo{Version: "4", OS: "windows", Arch: "amd64", Name: "qux"},
 	}
 	want := strings.Join([]string{
 		"",

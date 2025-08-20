@@ -9,6 +9,7 @@ import (
 	"runtime"
 
 	"github.com/koron-go/subcmd"
+	"github.com/koron/goup/internal/common"
 )
 
 // localSwitch switches "current" selected Go version.
@@ -37,15 +38,15 @@ var switchCommand = subcmd.DefineCommand("switch", "switch active Go release", f
 	}
 	target := fs.Arg(0)
 
-	list, err := listInstalledGo(root)
+	list, err := common.ListInstalledGo(root)
 	if err != nil {
 		return err
 	}
-	list = list.filter(func(g installedGo) bool {
-		if g.os != goos || g.arch != goarch {
+	list = list.Filter(func(g common.InstalledGo) bool {
+		if g.OS != goos || g.Arch != goarch {
 			return false
 		}
-		return g.version == target
+		return g.Version == target
 	})
 
 	switch len(list) {
@@ -57,12 +58,12 @@ var switchCommand = subcmd.DefineCommand("switch", "switch active Go release", f
 		panic(fmt.Sprintf("hit %d installations for %q", len(list), target))
 	}
 	g := list[0]
-	fmt.Println(g.name)
+	fmt.Println(g.Name)
 	if dryrun {
 		fmt.Fprintln(os.Stderr, "not installed because of dryrun")
 		return nil
 	}
-	return switchGo(root, linkname, g.name)
+	return switchGo(root, linkname, g.Name)
 })
 
 // switchGo switches/updates "current" symbolic link to goName.

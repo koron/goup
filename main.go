@@ -8,6 +8,7 @@ import (
 
 	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/internal/subcmd/install"
+	"github.com/koron/goup/internal/subcmd/list"
 	"github.com/koron/goup/internal/subcmd/remotelist"
 	"github.com/koron/goup/internal/subcmd/uninstall"
 )
@@ -64,7 +65,7 @@ var rootCommandSet = subcmd.DefineRootSet(
 	install.Command,    // install
 	uninstall.Command,  // uninstall
 	upgradeCommand,     // upgrade
-	listCommand,        // list
+	list.Command,       // list
 	switchCommand,      // switch
 	cleanCommand,       // clean
 )

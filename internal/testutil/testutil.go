@@ -158,6 +158,14 @@ func AssertMkdirAll(t *testing.T, name string) {
 	AssertIsExist(t, name, true)
 }
 
+func AssertSymlink(t *testing.T, oldname, newname string) {
+	err := os.Symlink(oldname, newname)
+	if err != nil {
+		t.Helper()
+		t.Fatalf("failed to create symbolic link: %s", err)
+	}
+}
+
 // AssertTouchFile creates a file with parent directories.
 func AssertTouchFile(t *testing.T, name string) {
 	t.Helper()
