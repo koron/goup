@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/koron-go/subcmd"
+	"github.com/koron/goup/internal/subcmd/bin"
 	"github.com/koron/goup/internal/subcmd/clean"
 	"github.com/koron/goup/internal/subcmd/install"
 	"github.com/koron/goup/internal/subcmd/list"
@@ -22,7 +23,7 @@ var rootCommandSet = subcmd.DefineRootSet(
 	list.Command,       // list
 	switchgo.Command,   // switch
 	clean.Command,      // clean
-	binSet,             // bin
+	bin.Set,            // bin
 )
 
 func main() {
