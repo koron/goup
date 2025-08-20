@@ -107,3 +107,22 @@ func ListInstalledGo(root string) (InstalledGos, error) {
 	})
 	return list, nil
 }
+
+// SwitchGo switches/updates "current" symbolic link to goName.
+func SwitchGo(root, linkname, goName string) error {
+	dstdir := filepath.Join(root, linkname)
+	// remove dstdir (symbolic link)
+	_, err := os.Lstat(dstdir)
+	if err == nil {
+		err := os.Remove(dstdir)
+		if err != nil {
+			return err
+		}
+	}
+	// create a symbolic link
+	err = os.Symlink(goName, dstdir)
+	if err != nil {
+		return err
+	}
+	return nil
+}

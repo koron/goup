@@ -166,6 +166,17 @@ func AssertSymlink(t *testing.T, oldname, newname string) {
 	}
 }
 
+func AssertSymbolicLink(t *testing.T, name, dest string) {
+	t.Helper()
+	got, err := os.Readlink(name)
+	if err != nil {
+		t.Fatalf("failed to read a link: %s", err)
+	}
+	if want := dest; got != want {
+		t.Fatalf("unexpected symbolic link: want=%s got=%s", want, got)
+	}
+}
+
 // AssertTouchFile creates a file with parent directories.
 func AssertTouchFile(t *testing.T, name string) {
 	t.Helper()

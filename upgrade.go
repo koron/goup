@@ -29,7 +29,7 @@ func (ua upgraderActual) install(ctx context.Context, ins install.Installer, ver
 }
 
 func (ua upgraderActual) setCurrent(root, linkname, installedName string) error {
-	return switchGo(root, linkname, installedName)
+	return common.SwitchGo(root, linkname, installedName)
 }
 
 func (ua upgraderActual) uninstall(ctx context.Context, uni uninstall.Uninstaller, ver string) error {

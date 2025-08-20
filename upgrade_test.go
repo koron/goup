@@ -56,7 +56,7 @@ func TestUpgradeDryrun1(t *testing.T) {
 		t.Errorf("mkdir failed: %v", err)
 		return
 	}
-	err = switchGo(root, "current", goname)
+	err = common.SwitchGo(root, "current", goname)
 	if err != nil {
 		t.Errorf("switch failed: %v", err)
 		return
