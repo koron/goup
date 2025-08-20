@@ -1,19 +1,21 @@
-package main
+package remotelist
 
 import (
 	"context"
 	"strings"
 	"testing"
+
+	"github.com/koron/goup/internal/testutil"
 )
 
 func TestRemoteList(t *testing.T) {
-	got, _ := testSubcmd(t, nil, func(ctx context.Context) {
-		err := remotelistCommand.Run(ctx, nil)
+	got, _ := testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, nil)
 		if err != nil {
 			t.Errorf("remoteList failed: %s", err)
 		}
 	})
-	assertStdout(t, strings.Join([]string{
+	testutil.AssertStdout(t, strings.Join([]string{
 		"Remote Version:",
 		"  go1.19.1",
 		"  go1.18.6",
@@ -21,13 +23,13 @@ func TestRemoteList(t *testing.T) {
 }
 
 func TestRemoteListMatch(t *testing.T) {
-	got, _ := testSubcmd(t, nil, func(ctx context.Context) {
-		err := remotelistCommand.Run(ctx, []string{"-all", "-match", "1\\.18"})
+	got, _ := testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{"-all", "-match", "1\\.18"})
 		if err != nil {
 			t.Errorf("remoteList failed: %s", err)
 		}
 	})
-	assertStdout(t, strings.Join([]string{
+	testutil.AssertStdout(t, strings.Join([]string{
 		"Remote Version:",
 		"  go1.18.6",
 		"  go1.18.5",

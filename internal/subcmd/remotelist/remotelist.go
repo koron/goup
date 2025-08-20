@@ -1,4 +1,4 @@
-package main
+package remotelist
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/koron/goup/godlremote"
 )
 
-var remotelistCommand = subcmd.DefineCommand("remotelist", "list published releases", func(ctx context.Context, args []string) error {
+var Command = subcmd.DefineCommand("remotelist", "list published releases", func(ctx context.Context, args []string) error {
 	var all bool
 	var match string
 	fs := subcmd.FlagSet(ctx)
