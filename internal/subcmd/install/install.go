@@ -1,4 +1,4 @@
-package main
+package install
 
 import (
 	"context"
@@ -14,16 +14,19 @@ import (
 	"github.com/koron-go/subcmd"
 	"github.com/koron-go/zipx"
 	"github.com/koron/goup/godlremote"
+	"github.com/koron/goup/internal/common"
 	"github.com/koron/goup/tarx"
 )
 
-var installCommand = subcmd.DefineCommand("install", "install Go releases", func(ctx context.Context, args []string) error {
-	var root string
-	var force bool
-	var goos string
-	var goarch string
+var Command = subcmd.DefineCommand("install", "install Go releases", func(ctx context.Context, args []string) error {
+	var (
+		root   string
+		force  bool
+		goos   string
+		goarch string
+	)
 	fs := subcmd.FlagSet(ctx)
-	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
+	fs.StringVar(&root, "root", common.GoupRoot(), "root dir to install")
 	fs.BoolVar(&force, "force", false, "override installation")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")
@@ -44,15 +47,15 @@ var installCommand = subcmd.DefineCommand("install", "install Go releases", func
 	if err != nil {
 		return err
 	}
-	ins := installer{
-		releases: rels,
-		rootdir:  root,
-		force:    force,
-		goos:     goos,
-		goarch:   goarch,
+	ins := Installer{
+		Releases: rels,
+		RootDir:  root,
+		Force:    force,
+		GOOS:     goos,
+		GOARCH:   goarch,
 	}
 	for _, ver := range versions {
-		err := ins.install(ctx, ver)
+		err := ins.Install(ctx, ver)
 		if err != nil {
 			return err
 		}
@@ -60,21 +63,22 @@ var installCommand = subcmd.DefineCommand("install", "install Go releases", func
 	return nil
 })
 
-type installer struct {
-	releases godlremote.Releases
-	rootdir  string
-	force    bool
-	goos     string
-	goarch   string
+type Installer struct {
+	Releases godlremote.Releases
+	RootDir  string
+	Force    bool
+	GOOS     string
+	GOARCH   string
 }
 
-func (ins installer) archiveFile(ver string) (godlremote.File, bool) {
-	for _, r := range ins.releases {
+// ArchiveFile finds a release archive file from releases by version.
+func (ins Installer) ArchiveFile(ver string) (godlremote.File, bool) {
+	for _, r := range ins.Releases {
 		if r.Version != ver {
 			continue
 		}
 		for _, f := range r.Files {
-			if f.Kind != "archive" || f.OS != ins.goos || f.Arch != ins.goarch {
+			if f.Kind != "archive" || f.OS != ins.GOOS || f.Arch != ins.GOARCH {
 				continue
 			}
 			return f, true
@@ -84,8 +88,8 @@ func (ins installer) archiveFile(ver string) (godlremote.File, bool) {
 }
 
 // dldir creates/assures a directory to download archives.
-func (ins installer) dldir() (string, error) {
-	dir := filepath.Join(ins.rootdir, "dl")
+func (ins Installer) dldir() (string, error) {
+	dir := filepath.Join(ins.RootDir, "dl")
 	err := os.MkdirAll(dir, 0777)
 	if err != nil {
 		return "", err
@@ -94,8 +98,8 @@ func (ins installer) dldir() (string, error) {
 }
 
 // exdir creates/assures a directory to extracting an archive.
-func (ins installer) extdir(f godlremote.File) (string, error) {
-	dir := filepath.Join(ins.rootdir, f.Name())
+func (ins Installer) extdir(f godlremote.File) (string, error) {
+	dir := filepath.Join(ins.RootDir, f.Name())
 	err := os.MkdirAll(dir, 0777)
 	if err != nil {
 		return "", err
@@ -103,18 +107,18 @@ func (ins installer) extdir(f godlremote.File) (string, error) {
 	return dir, nil
 }
 
-func (ins installer) install(ctx context.Context, ver string) error {
-	af, ok := ins.archiveFile(ver)
+func (ins Installer) Install(ctx context.Context, ver string) error {
+	af, ok := ins.ArchiveFile(ver)
 	if !ok {
 		return fmt.Errorf("no archives found for version=%s OS=%s arch=%s",
-			ver, ins.goos, ins.goarch)
+			ver, ins.GOOS, ins.GOARCH)
 	}
 	dldir, err := ins.dldir()
 	if err != nil {
 		return err
 	}
 	name := filepath.Join(dldir, af.Filename)
-	err = af.Download(ctx, name, ins.force)
+	err = af.Download(ctx, name, ins.Force)
 	if err != nil {
 		return err
 	}
@@ -130,7 +134,7 @@ func (ins installer) install(ctx context.Context, ver string) error {
 	return nil
 }
 
-func (ins installer) extract(ctx context.Context, dstdir string, srcfile string) error {
+func (ins Installer) extract(ctx context.Context, dstdir string, srcfile string) error {
 	if strings.HasSuffix(srcfile, ".zip") {
 		err := zipx.New().ExtractFile(ctx, srcfile, zipDestDir(dstdir))
 		if err != nil {

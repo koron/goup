@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -88,5 +89,30 @@ func AssertStdout(t *testing.T, want, got string) {
 	if d != "" {
 		t.Helper()
 		t.Errorf("unexpected stdout: -want +got\n%s", d)
+	}
+}
+
+// AssertGodir checkk installed Go directory
+func AssertGodir(t *testing.T, root, goname string) {
+	t.Helper()
+	godir := filepath.Join(root, goname)
+	assertIsExist(t, godir, true)
+	assertIsExist(t, filepath.Join(godir, "README.txt"), false)
+	// more checks in future. need to files and dirs adding to dummy archives.
+}
+
+// assertIsExist checks a file/dir is exist
+func assertIsExist(t *testing.T, name string, isDir bool) {
+	t.Helper()
+	fi, err := os.Stat(name)
+	if err != nil {
+		t.Fatalf("unexpected os.Stat failure: %s", err)
+	}
+	if want, got := isDir, fi.IsDir(); want != got {
+		if want {
+			t.Fatalf("a path %s is not a directory", name)
+		} else {
+			t.Fatalf("a path %s is not a file", name)
+		}
 	}
 }

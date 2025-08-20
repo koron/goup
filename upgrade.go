@@ -10,19 +10,20 @@ import (
 
 	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/godlremote"
+	"github.com/koron/goup/internal/subcmd/install"
 	"golang.org/x/mod/semver"
 )
 
 type upgrader interface {
-	install(ctx context.Context, ins installer, ver string) error
+	install(ctx context.Context, ins install.Installer, ver string) error
 	setCurrent(root, linkname, installedName string) error
 	uninstall(ctx context.Context, uni uninstaller, ver string) error
 }
 
 type upgraderActual struct{}
 
-func (ua upgraderActual) install(ctx context.Context, ins installer, ver string) error {
-	return ins.install(ctx, ver)
+func (ua upgraderActual) install(ctx context.Context, ins install.Installer, ver string) error {
+	return ins.Install(ctx, ver)
 }
 
 func (ua upgraderActual) setCurrent(root, linkname, installedName string) error {
@@ -35,7 +36,7 @@ func (ua upgraderActual) uninstall(ctx context.Context, uni uninstaller, ver str
 
 type upgraderRehearsal struct{}
 
-func (ur upgraderRehearsal) install(ctx context.Context, ins installer, ver string) error {
+func (ur upgraderRehearsal) install(ctx context.Context, ins install.Installer, ver string) error {
 	debugf("DRYRUN: install Go %s", ver)
 	return nil
 }
@@ -124,17 +125,17 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 		debugf("upgrading Go %s", target.local.name)
 
 		// install new version
-		ins := installer{
-			releases: godlremote.Releases{target.remote.origin},
-			rootdir:  root,
-			force:    false,
-			goos:     target.local.os,
-			goarch:   target.local.arch,
+		ins := install.Installer{
+			Releases: godlremote.Releases{target.remote.origin},
+			RootDir:  root,
+			Force:    false,
+			GOOS:     target.local.os,
+			GOARCH:   target.local.arch,
 		}
 		ver := target.remote.origin.Version
-		archiveFile, ok := ins.archiveFile(ver)
+		archiveFile, ok := ins.ArchiveFile(ver)
 		if !ok {
-			warnf("no archive files found for version=%s os=%s arch=%s, skipped", ver, ins.goos, ins.goarch)
+			warnf("no archive files found for version=%s os=%s arch=%s, skipped", ver, ins.GOOS, ins.GOARCH)
 			continue
 		}
 		err := upg.install(ctx, ins, ver)
