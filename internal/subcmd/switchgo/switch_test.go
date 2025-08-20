@@ -1,4 +1,4 @@
-package switch_
+package switchgo
 
 import (
 	"context"

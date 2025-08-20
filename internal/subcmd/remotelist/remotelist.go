@@ -1,3 +1,4 @@
+// Package remotelist provides "remotelist" subcmd of goup.
 package remotelist
 
 import (

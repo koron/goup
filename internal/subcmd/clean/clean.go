@@ -1,3 +1,4 @@
+// Package clean provides "clean" subcmd of goup.
 package clean
 
 import (

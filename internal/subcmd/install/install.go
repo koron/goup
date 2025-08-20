@@ -1,3 +1,4 @@
+// Package install provides "install" subcmd of goup.
 package install
 
 import (

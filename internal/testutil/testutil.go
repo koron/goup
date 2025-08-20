@@ -1,3 +1,4 @@
+// Package testutil provides utilities for goup test.
 package testutil
 
 import (

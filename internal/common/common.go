@@ -1,3 +1,4 @@
+// Package common provides common functions for sub commands.
 package common
 
 import (

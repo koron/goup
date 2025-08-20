@@ -1,3 +1,4 @@
+// Package upgrade provides "upgrade" subcmd of goup.
 package upgrade
 
 import (

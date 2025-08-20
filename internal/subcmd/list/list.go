@@ -1,3 +1,4 @@
+// Package list provides "list" subcmd of goup.
 package list
 
 import (

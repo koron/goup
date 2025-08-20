@@ -1,3 +1,4 @@
+// Package uninstall provides "uninstall" subcmd of goup.
 package uninstall
 
 import (

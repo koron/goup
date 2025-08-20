@@ -1,4 +1,5 @@
-package switch_
+// Package switchgo provides "switch" subcmd of goup.
+package switchgo
 
 import (
 	"context"
@@ -11,7 +12,7 @@ import (
 	"github.com/koron/goup/internal/common"
 )
 
-// localSwitch switches "current" selected Go version.
+// Command switches "current" selected Go version.
 var Command = subcmd.DefineCommand("switch", "switch active Go release", func(ctx context.Context, args []string) error {
 	var (
 		root     string
