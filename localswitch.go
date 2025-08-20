@@ -1,8 +1,8 @@
 package main
 
 import (
+	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,12 +10,13 @@ import (
 )
 
 // localSwitch switches "current" selected Go version.
-func localSwitch(fs *flag.FlagSet, args []string) error {
+func localSwitch(ctx context.Context, args []string) error {
 	var root string
 	var goos string
 	var goarch string
 	var dryrun bool
 	var linkname string
+	fs := context2flagset(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")

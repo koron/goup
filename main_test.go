@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"io"
 	"net/http/httptest"
 	"os"
@@ -13,24 +14,16 @@ import (
 	"github.com/koron/goup/internal/dltestsrv"
 )
 
-func testSubcmd(t *testing.T, s *dltestsrv.Server, fn func()) (capturedOut, capturedErr string) {
+func testSubcmd(t *testing.T, s *dltestsrv.Server, fn func(context.Context)) (capturedOut, capturedErr string) {
 	return captureStdoutStderr(t, func() {
-		withDltestsrv(t, s, fn)
+		if s == nil {
+			s = &dltestsrv.Server{}
+		}
+		srv := httptest.NewServer(s)
+		defer srv.Close()
+		ctx := godlremote.WithDownloadBase(context.Background(), srv.URL)
+		fn(ctx)
 	})
-}
-
-func withDltestsrv(t *testing.T, s *dltestsrv.Server, fn func()) {
-	downloadBase := godlremote.DownloadBase
-	if s == nil {
-		s = &dltestsrv.Server{}
-	}
-	srv := httptest.NewServer(s)
-	godlremote.DownloadBase = srv.URL
-	defer func() {
-		godlremote.DownloadBase = downloadBase
-		srv.Close()
-	}()
-	fn()
 }
 
 func captureStdoutStderr(t *testing.T, fn func()) (capturedOut, capturedErr string) {

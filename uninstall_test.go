@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"path/filepath"
 	"testing"
 )
@@ -11,9 +11,8 @@ func TestUninstall(t *testing.T) {
 	godir := filepath.Join(root, "go1.18.6.windows-amd64")
 	assertMkdirAll(t, godir)
 	// uninstall
-	out, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("uninstall", flag.ContinueOnError)
-		err := uninstallCmd(fs, []string{
+	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := uninstallCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6",
 		})
 		if err != nil {
@@ -29,9 +28,8 @@ func TestUninstallInvalid(t *testing.T) {
 	godir := filepath.Join(root, "go1.18.6.windows-amd64")
 	assertIsNotExist(t, godir)
 	// uninstall
-	out, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("uninstall", flag.ContinueOnError)
-		err := uninstallCmd(fs, []string{
+	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := uninstallCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6",
 		})
 		assertErr(t, err, "no deleted files for go1.18.6.windows-amd64")
@@ -47,9 +45,8 @@ func TestUninstallClean(t *testing.T) {
 	dlfile := filepath.Join(root, "dl", "go1.18.6.windows-amd64.zip")
 	assertTouchFile(t, dlfile)
 	// uninstall
-	out, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("uninstall", flag.ContinueOnError)
-		err := uninstallCmd(fs, []string{
+	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := uninstallCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "-clean", "go1.18.6",
 		})
 		if err != nil {

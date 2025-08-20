@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,11 +23,8 @@ func TestLocalList(t *testing.T) {
 	assertMkdirAll(t, godir0)
 	assertMkdirAll(t, godir1)
 	assertSymlink(t, "go1.18.6.windows-amd64", filepath.Join(root, "current"))
-	out, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("list", flag.ContinueOnError)
-		err := localList(fs, []string{
-			"-root", root,
-		})
+	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := listCommand.Run(ctx, []string{"-root", root})
 		if err != nil {
 			t.Errorf("list failed: %s", err)
 		}

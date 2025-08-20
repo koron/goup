@@ -1,15 +1,14 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"testing"
 )
 
 func TestInstallZip(t *testing.T) {
 	root := t.TempDir()
-	got, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("install", flag.ContinueOnError)
-		err := installCmd(fs, []string{"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6"})
+	got, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := installCommand.Run(ctx, []string{"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6"})
 		if err != nil {
 			t.Errorf("install failed: %s", err)
 		}
@@ -20,9 +19,8 @@ func TestInstallZip(t *testing.T) {
 
 func TestInstallTarGz(t *testing.T) {
 	root := t.TempDir()
-	got, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("install", flag.ContinueOnError)
-		err := installCmd(fs, []string{"-root", root, "-goos", "linux", "-goarch", "amd64", "go1.18.6"})
+	got, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := installCommand.Run(ctx, []string{"-root", root, "-goos", "linux", "-goarch", "amd64", "go1.18.6"})
 		if err != nil {
 			t.Errorf("install failed: %s", err)
 		}

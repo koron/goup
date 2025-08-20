@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -17,11 +16,12 @@ import (
 	"github.com/koron/goup/tarx"
 )
 
-func installCmd(fs *flag.FlagSet, args []string) error {
+func installCmd(ctx context.Context, args []string) error {
 	var root string
 	var force bool
 	var goos string
 	var goarch string
+	fs := context2flagset(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.BoolVar(&force, "force", false, "override installation")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
@@ -39,7 +39,6 @@ func installCmd(fs *flag.FlagSet, args []string) error {
 		return errors.New("no versions to install")
 	}
 
-	ctx := context.Background()
 	rels, err := godlremote.Download(ctx, true)
 	if err != nil {
 		return err

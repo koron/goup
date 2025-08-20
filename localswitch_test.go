@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -27,9 +27,8 @@ func TestSwitch(t *testing.T) {
 	assertMkdirAll(t, filepath.Join(root, "go1.18.6.linux-amd64"))
 	curr := filepath.Join(root, "current")
 	// switch to go1.18.6
-	out0, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("switch", flag.ContinueOnError)
-		err := localSwitch(fs, []string{
+	out0, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := switchCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6",
 		})
 		if err != nil {
@@ -40,9 +39,8 @@ func TestSwitch(t *testing.T) {
 	assertSymbolicLink(t, curr, "go1.18.6.windows-amd64")
 
 	// switch to go1.19.1
-	out1, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("switch", flag.ContinueOnError)
-		err := localSwitch(fs, []string{
+	out1, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := switchCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.19.1",
 		})
 		if err != nil {
@@ -56,9 +54,8 @@ func TestSwitch(t *testing.T) {
 func TestSwitchUnmatch(t *testing.T) {
 	root := t.TempDir()
 	// switch to go1.18.6
-	out, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("switch", flag.ContinueOnError)
-		err := localSwitch(fs, []string{
+	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := switchCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6",
 		})
 		assertErr(t, err, `no installations for "go1.18.6"`)
@@ -69,9 +66,8 @@ func TestSwitchUnmatch(t *testing.T) {
 func TestSwitchMatchMany(t *testing.T) {
 	root := t.TempDir()
 	// switch to go1.18.6
-	out, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("switch", flag.ContinueOnError)
-		err := localSwitch(fs, []string{
+	out, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := switchCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "go1.18.6",
 		})
 		assertErr(t, err, `no installations for "go1.18.6"`)
@@ -86,9 +82,8 @@ func TestSwitchDryrun(t *testing.T) {
 	curr := filepath.Join(root, "current")
 
 	// switch to go1.18.6
-	cout, cerr := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("switch", flag.ContinueOnError)
-		err := localSwitch(fs, []string{
+	cout, cerr := testSubcmd(t, nil, func(ctx context.Context) {
+		err := switchCommand.Run(ctx, []string{
 			"-root", root, "-goos", "windows", "-goarch", "amd64", "-dryrun", "go1.18.6",
 		})
 		if err != nil {

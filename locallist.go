@@ -1,8 +1,8 @@
 package main
 
 import (
+	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,9 +14,10 @@ import (
 )
 
 // localList lists all Go versions which locally installed.
-func localList(fs *flag.FlagSet, args []string) error {
+func localList(ctx context.Context, args []string) error {
 	var root string
 	var linkname string
+	fs := context2flagset(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	if err := fs.Parse(args); err != nil {

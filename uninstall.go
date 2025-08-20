@@ -3,18 +3,18 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 )
 
-func uninstallCmd(fs *flag.FlagSet, args []string) error {
+func uninstallCmd(ctx context.Context, args []string) error {
 	var root string
 	var goos string
 	var goarch string
 	var clean bool
+	fs := context2flagset(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&goos, "goos", runtime.GOOS, "OS for go to install")
 	fs.StringVar(&goarch, "goarch", runtime.GOARCH, "ARCH for go to install")
@@ -32,7 +32,6 @@ func uninstallCmd(fs *flag.FlagSet, args []string) error {
 		return errors.New("no versions to install")
 	}
 
-	ctx := context.Background()
 	uni := uninstaller{
 		rootdir: root,
 		goos:    goos,

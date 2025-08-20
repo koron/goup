@@ -1,15 +1,14 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"strings"
 	"testing"
 )
 
 func TestRemoteList(t *testing.T) {
-	got, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("remotelist", flag.ContinueOnError)
-		err := remoteList(fs, nil)
+	got, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := remotelistCommand.Run(ctx, nil)
 		if err != nil {
 			t.Errorf("remoteList failed: %s", err)
 		}
@@ -22,9 +21,8 @@ func TestRemoteList(t *testing.T) {
 }
 
 func TestRemoteListMatch(t *testing.T) {
-	got, _ := testSubcmd(t, nil, func() {
-		fs := flag.NewFlagSet("remotelist", flag.ContinueOnError)
-		err := remoteList(fs, []string{"-all", "-match", "1\\.18"})
+	got, _ := testSubcmd(t, nil, func(ctx context.Context) {
+		err := remotelistCommand.Run(ctx, []string{"-all", "-match", "1\\.18"})
 		if err != nil {
 			t.Errorf("remoteList failed: %s", err)
 		}

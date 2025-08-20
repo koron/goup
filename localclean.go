@@ -1,8 +1,8 @@
 package main
 
 import (
+	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,10 +12,11 @@ import (
 var rxGoArchive = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:rc|beta|alpha)\d+)?\.\D[^-]*-.+)\.(?:zip|tar\.gz)$`)
 
 // localClean removes download cache.
-func localClean(fs *flag.FlagSet, args []string) error {
+func localClean(ctx context.Context, args []string) error {
 	var root string
 	var dryrun bool
 	var all bool
+	fs := context2flagset(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
 	fs.BoolVar(&all, "all", false, "clean all caches")
