@@ -1,6 +1,8 @@
-package main
+// Package testutil provides utilities for goup test.
+package testutil
 
 import (
+	"context"
 	"io"
 	"net/http/httptest"
 	"os"
@@ -13,24 +15,18 @@ import (
 	"github.com/koron/goup/internal/dltestsrv"
 )
 
-func testSubcmd(t *testing.T, s *dltestsrv.Server, fn func()) (capturedOut, capturedErr string) {
+func TestSubcmd(t *testing.T, s *dltestsrv.Server, fn func(context.Context)) (capturedOut, capturedErr string) {
+	t.Helper()
 	return captureStdoutStderr(t, func() {
-		withDltestsrv(t, s, fn)
+		t.Helper()
+		if s == nil {
+			s = &dltestsrv.Server{}
+		}
+		srv := httptest.NewServer(s)
+		defer srv.Close()
+		ctx := godlremote.WithDownloadBase(context.Background(), srv.URL)
+		fn(ctx)
 	})
-}
-
-func withDltestsrv(t *testing.T, s *dltestsrv.Server, fn func()) {
-	downloadBase := godlremote.DownloadBase
-	if s == nil {
-		s = &dltestsrv.Server{}
-	}
-	srv := httptest.NewServer(s)
-	godlremote.DownloadBase = srv.URL
-	defer func() {
-		godlremote.DownloadBase = downloadBase
-		srv.Close()
-	}()
-	fn()
 }
 
 func captureStdoutStderr(t *testing.T, fn func()) (capturedOut, capturedErr string) {
@@ -89,36 +85,7 @@ func captureStdoutStderr(t *testing.T, fn func()) (capturedOut, capturedErr stri
 	return
 }
 
-func captureStdout(t *testing.T, fn func()) (out string) {
-	stdout := os.Stdout
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Helper()
-		t.Fatalf("failed take over os.Stdout: %s", err)
-	}
-	os.Stdout = w
-	outC := make(chan string)
-	go func() {
-		var buf strings.Builder
-		_, err := io.Copy(&buf, r)
-		r.Close()
-		if err != nil {
-			t.Helper()
-			t.Errorf("goup testing: copying pipe: %s", err)
-			return
-		}
-		outC <- buf.String()
-	}()
-	defer func() {
-		w.Close()
-		os.Stdout = stdout
-		out = <-outC
-	}()
-	fn()
-	return
-}
-
-func assertStdout(t *testing.T, want, got string) {
+func AssertStdout(t *testing.T, want, got string) {
 	d := cmp.Diff(want, got)
 	if d != "" {
 		t.Helper()
@@ -126,36 +93,7 @@ func assertStdout(t *testing.T, want, got string) {
 	}
 }
 
-func captureStderr(t *testing.T, fn func()) (out string) {
-	stdout := os.Stderr
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Helper()
-		t.Fatalf("failed take over os.Stderr: %s", err)
-	}
-	os.Stderr = w
-	outC := make(chan string)
-	go func() {
-		var buf strings.Builder
-		_, err := io.Copy(&buf, r)
-		r.Close()
-		if err != nil {
-			t.Helper()
-			t.Errorf("goup testing: copying pipe: %s", err)
-			return
-		}
-		outC <- buf.String()
-	}()
-	defer func() {
-		w.Close()
-		os.Stderr = stdout
-		out = <-outC
-	}()
-	fn()
-	return
-}
-
-func assertStderr(t *testing.T, want, got string) {
+func AssertStderr(t *testing.T, want, got string) {
 	d := cmp.Diff(want, got)
 	if d != "" {
 		t.Helper()
@@ -163,16 +101,16 @@ func assertStderr(t *testing.T, want, got string) {
 	}
 }
 
-// assertGodir checkk installed Go directory
-func assertGodir(t *testing.T, root, goname string) {
+// AssertGodir checkk installed Go directory
+func AssertGodir(t *testing.T, root, goname string) {
 	t.Helper()
 	godir := filepath.Join(root, goname)
-	assertIsExist(t, godir, true)
-	assertIsExist(t, filepath.Join(godir, "README.txt"), false)
+	AssertIsExist(t, godir, true)
+	AssertIsExist(t, filepath.Join(godir, "README.txt"), false)
 	// more checks in future. need to files and dirs adding to dummy archives.
 }
 
-func assertErr(t *testing.T, err error, want string) {
+func AssertErr(t *testing.T, err error, want string) {
 	t.Helper()
 	if err == nil {
 		t.Fatal("an operation is succeeded, unexpectedly")
@@ -182,15 +120,8 @@ func assertErr(t *testing.T, err error, want string) {
 	}
 }
 
-func assertNoErr(t *testing.T, err error) {
-	if err != nil {
-		t.Helper()
-		t.Fatalf("an operation failed: %s", err)
-	}
-}
-
-// assertIsNotExist checks a file/dir is not exist
-func assertIsNotExist(t *testing.T, name string) {
+// AssertIsNotExist checks a file/dir is not exist
+func AssertIsNotExist(t *testing.T, name string) {
 	_, err := os.Stat(name)
 	if err != nil && os.IsNotExist(err) {
 		return
@@ -202,8 +133,8 @@ func assertIsNotExist(t *testing.T, name string) {
 	t.Fatalf("unexpected os.Stat failure: %s", err)
 }
 
-// assertIsExist checks a file/dir is exist
-func assertIsExist(t *testing.T, name string, isDir bool) {
+// AssertIsExist checks a file/dir is exist
+func AssertIsExist(t *testing.T, name string, isDir bool) {
 	t.Helper()
 	fi, err := os.Stat(name)
 	if err != nil {
@@ -218,18 +149,37 @@ func assertIsExist(t *testing.T, name string, isDir bool) {
 	}
 }
 
-// assertMkdirAll creates a dir with parent directories.
-func assertMkdirAll(t *testing.T, name string) {
+// AssertMkdirAll creates a dir with parent directories.
+func AssertMkdirAll(t *testing.T, name string) {
 	t.Helper()
 	err := os.MkdirAll(name, 0755)
 	if err != nil {
 		t.Fatalf("failed to make directory: %s", err)
 	}
-	assertIsExist(t, name, true)
+	AssertIsExist(t, name, true)
 }
 
-// assertTouchFile creates a file with parent directories.
-func assertTouchFile(t *testing.T, name string) {
+func AssertSymlink(t *testing.T, oldname, newname string) {
+	err := os.Symlink(oldname, newname)
+	if err != nil {
+		t.Helper()
+		t.Fatalf("failed to create symbolic link: %s", err)
+	}
+}
+
+func AssertSymbolicLink(t *testing.T, name, dest string) {
+	t.Helper()
+	got, err := os.Readlink(name)
+	if err != nil {
+		t.Fatalf("failed to read a link: %s", err)
+	}
+	if want := dest; got != want {
+		t.Fatalf("unexpected symbolic link: want=%s got=%s", want, got)
+	}
+}
+
+// AssertTouchFile creates a file with parent directories.
+func AssertTouchFile(t *testing.T, name string) {
 	t.Helper()
 	dir := filepath.Dir(name)
 	err := os.MkdirAll(dir, 0755)
@@ -244,5 +194,5 @@ func assertTouchFile(t *testing.T, name string) {
 	if err != nil {
 		t.Fatalf("failed to close a file %s: %s", name, err)
 	}
-	assertIsExist(t, name, false)
+	AssertIsExist(t, name, false)
 }

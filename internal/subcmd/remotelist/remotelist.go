@@ -1,17 +1,19 @@
-package main
+// Package remotelist provides "remotelist" subcmd of goup.
+package remotelist
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"regexp"
 
+	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/godlremote"
 )
 
-func remoteList(fs *flag.FlagSet, args []string) error {
+var Command = subcmd.DefineCommand("remotelist", "list published releases", func(ctx context.Context, args []string) error {
 	var all bool
 	var match string
+	fs := subcmd.FlagSet(ctx)
 	fs.BoolVar(&all, "all", false, "list all releases (archive and unstable)")
 	fs.StringVar(&match, "match", "", "show only matched versions (regexp)")
 	if err := fs.Parse(args); err != nil {
@@ -29,7 +31,6 @@ func remoteList(fs *flag.FlagSet, args []string) error {
 		}
 	}
 
-	ctx := context.Background()
 	rels, err := godlremote.Download(ctx, all)
 	if err != nil {
 		return err
@@ -39,4 +40,4 @@ func remoteList(fs *flag.FlagSet, args []string) error {
 		fmt.Printf("  %s\n", r.Version)
 	}
 	return nil
-}
+})

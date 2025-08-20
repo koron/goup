@@ -1,23 +1,21 @@
-package main
+package upgrade
 
 import (
 	"context"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/koron/goup/godlremote"
+	"github.com/koron/goup/internal/common"
+	"github.com/koron/goup/internal/testutil"
 )
 
 func TestUpgradeCmd(t *testing.T) {
 	root := t.TempDir()
 	ctx := context.Background()
-	err := upgradeCommand.Run(ctx, []string{"-root", root})
+	err := Command.Run(ctx, []string{"-root", root})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -25,9 +23,8 @@ func TestUpgradeCmd(t *testing.T) {
 }
 
 func TestUpgradeCmdEmptyRoot(t *testing.T) {
-	_ = captureStderr(t, func() {
-		ctx := context.Background()
-		err := upgradeCommand.Run(ctx, []string{"-root", ""})
+	_, _ = testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{"-root", ""})
 		if err == nil {
 			t.Errorf("want error but got no errors")
 			return
@@ -52,7 +49,7 @@ func TestUpgradeDryrun0(t *testing.T) {
 func TestUpgradeDryrun1(t *testing.T) {
 	// should detect an upgrade for "current" version.
 
-	const goname = "go1.24.0.windows-amd64"
+	const goname = "go1.18.windows-amd64"
 
 	root := t.TempDir()
 	err := os.MkdirAll(filepath.Join(root, goname), 0777)
@@ -60,46 +57,31 @@ func TestUpgradeDryrun1(t *testing.T) {
 		t.Errorf("mkdir failed: %v", err)
 		return
 	}
-	err = switchGo(root, "current", goname)
+	err = common.SwitchGo(root, "current", goname)
 	if err != nil {
 		t.Errorf("switch failed: %v", err)
 		return
 	}
 
-	// Start HTTP server to server dummy release list.
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		f, err := os.Open("testdata/list-20250820.json")
+	_, got := testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{"-root", root, "-dryrun"})
 		if err != nil {
-			t.Errorf("failed open a file: %s", err)
-			return
-		}
-		defer f.Close()
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(200)
-		io.Copy(w, f)
-	}))
-	defer srv.Close()
-	ctx := godlremote.WithDownloadBase(context.Background(), srv.URL)
-
-	got := captureStderr(t, func() {
-		err = upgradeCommand.Run(ctx, []string{"-root", root, "-dryrun"})
-		if err != nil {
-			t.Error(err)
+			t.Errorf("upgrade failed: %s", err)
 		}
 	})
-	assertStderr(t, strings.Join([]string{
-		"upgraded Go go1.24.0.windows-amd64 to go1.24.6.windows-amd64",
+	testutil.AssertStderr(t, strings.Join([]string{
+		"upgraded Go go1.18.windows-amd64 to go1.18.6.windows-amd64",
 		""}, "\n"), got)
 
 	// FIXME: check result
 }
 
 func TestDebugInstalledGos(t *testing.T) {
-	list := installedGos{
-		installedGo{version: "1", os: "windows", arch: "amd64", name: "foo"},
-		installedGo{version: "2", os: "windows", arch: "amd64", name: "bar"},
-		installedGo{version: "3", os: "windows", arch: "amd64", name: "baz"},
-		installedGo{version: "4", os: "windows", arch: "amd64", name: "qux"},
+	list := common.InstalledGos{
+		common.InstalledGo{Version: "1", OS: "windows", Arch: "amd64", Name: "foo"},
+		common.InstalledGo{Version: "2", OS: "windows", Arch: "amd64", Name: "bar"},
+		common.InstalledGo{Version: "3", OS: "windows", Arch: "amd64", Name: "baz"},
+		common.InstalledGo{Version: "4", OS: "windows", Arch: "amd64", Name: "qux"},
 	}
 	want := strings.Join([]string{
 		"",

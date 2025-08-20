@@ -11,28 +11,29 @@ import (
 	"os"
 )
 
-var DownloadBase = "https://go.dev/dl/"
+const downloadBase = "https://go.dev/dl/"
 
-var downloadBaseKey = struct{}{}
+type downloadBaseKey struct{}
 
 func getBase(ctx context.Context) string {
-	if overriddenBase, ok := ctx.Value(downloadBaseKey).(string); ok {
+	if overriddenBase, ok := ctx.Value(downloadBaseKey{}).(string); ok {
 		return overriddenBase
 	}
-	return DownloadBase
+	return downloadBase
 }
 
+// WithDownloadBase overrides the base URL for downloads. Mainly for testing.
 func WithDownloadBase(ctx context.Context, newBase string) context.Context {
-	return context.WithValue(ctx, downloadBaseKey, newBase)
+	return context.WithValue(ctx, downloadBaseKey{}, newBase)
 }
 
 // Download downloads releases from go.dev/dl
 func Download(ctx context.Context, all bool) (Releases, error) {
-	return download(ctx, getBase(ctx), all)
+	return download(ctx, all)
 }
 
-func download(ctx context.Context, base string, all bool) (Releases, error) {
-	u, err := url.JoinPath(base, "/")
+func download(ctx context.Context, all bool) (Releases, error) {
+	u, err := url.JoinPath(getBase(ctx), "/")
 	if err != nil {
 		return nil, err
 	}
