@@ -1,3 +1,4 @@
+// Package bindir provides functions to operate GOBIN directory.
 package bindir
 
 import (

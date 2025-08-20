@@ -1,4 +1,5 @@
-package main
+// Package bin provides "bin" sub command set of goup.
+package bin
 
 import (
 	"context"
@@ -11,11 +12,11 @@ import (
 	"github.com/koron/goup/internal/bindir"
 )
 
-var binSet = subcmd.DefineSet("bin", "operate executables in GOBIN dir",
-	subcmd.DefineCommand("list", "list executables in GOBIN", binaryListCommand),
+var Set = subcmd.DefineSet("bin", "operate executables in GOBIN dir",
+	subcmd.DefineCommand("list", "list executables in GOBIN", ListCommand),
 )
 
-func binaryListCommand(ctx context.Context, args []string) error {
+func ListCommand(ctx context.Context, args []string) error {
 	//fs := subcmd.FlagSet(ctx)
 	b, err := bindir.Open()
 	if err != nil {
