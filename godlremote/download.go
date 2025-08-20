@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-const DownloadBase = "https://go.dev/dl/"
+const downloadBase = "https://go.dev/dl/"
 
 var downloadBaseKey = struct{}{}
 
@@ -19,9 +19,10 @@ func getBase(ctx context.Context) string {
 	if overriddenBase, ok := ctx.Value(downloadBaseKey).(string); ok {
 		return overriddenBase
 	}
-	return DownloadBase
+	return downloadBase
 }
 
+// WithDownloadBase overrides the base URL for downloads. Mainly for testing.
 func WithDownloadBase(ctx context.Context, newBase string) context.Context {
 	return context.WithValue(ctx, downloadBaseKey, newBase)
 }
