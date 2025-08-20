@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
@@ -26,7 +25,7 @@ var rootCommandSet = subcmd.DefineRootSet(
 )
 
 func main() {
-	err := subcmd.Run(rootCommandSet, flag.Args()...)
+	err := subcmd.Run(rootCommandSet, os.Args[1:]...)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed: %s\n", err)
 		os.Exit(1)
