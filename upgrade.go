@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -51,11 +50,14 @@ func (ur upgraderRehearsal) uninstall(ctx context.Context, uni uninstaller, ver 
 }
 
 // upgradeCmd upgrades installed Go version.
-func upgradeCmd(fs *flag.FlagSet, args []string) error {
-	var root string
-	var linkname string
-	var dryrun bool
-	var all bool
+func upgradeCmd(ctx context.Context, args []string) error {
+	var (
+		root     string
+		linkname string
+		dryrun   bool
+		all      bool
+	)
+	fs := context2flagset(ctx)
 	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
 	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
@@ -67,8 +69,6 @@ func upgradeCmd(fs *flag.FlagSet, args []string) error {
 		fs.PrintDefaults()
 		return errors.New("required -root")
 	}
-
-	ctx := context.Background()
 	return upgrade(ctx, root, linkname, dryrun, all)
 }
 

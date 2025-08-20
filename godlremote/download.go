@@ -13,9 +13,22 @@ import (
 
 var DownloadBase = "https://go.dev/dl/"
 
+var downloadBaseKey = struct{}{}
+
+func getBase(ctx context.Context) string {
+	if overriddenBase, ok := ctx.Value(downloadBaseKey).(string); ok {
+		return overriddenBase
+	}
+	return DownloadBase
+}
+
+func WithDownloadBase(ctx context.Context, newBase string) context.Context {
+	return context.WithValue(ctx, downloadBaseKey, newBase)
+}
+
 // Download downloads releases from go.dev/dl
 func Download(ctx context.Context, all bool) (Releases, error) {
-	return download(ctx, DownloadBase, all)
+	return download(ctx, getBase(ctx), all)
 }
 
 func download(ctx context.Context, base string, all bool) (Releases, error) {
@@ -65,7 +78,7 @@ func (f File) Download(ctx context.Context, name string, force bool) error {
 }
 
 func (f File) download(ctx context.Context, name string) error {
-	u, err := url.JoinPath(DownloadBase, f.Filename)
+	u, err := url.JoinPath(getBase(ctx), f.Filename)
 	if err != nil {
 		return err
 	}

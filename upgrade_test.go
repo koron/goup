@@ -2,19 +2,22 @@ package main
 
 import (
 	"context"
-	"flag"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/koron/goup/godlremote"
 )
 
 func TestUpgradeCmd(t *testing.T) {
 	root := t.TempDir()
-	fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
-	err := upgradeCmd(fs, []string{"-root", root})
+	ctx := context.Background()
+	err := upgradeCommand.Run(ctx, []string{"-root", root})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,8 +26,8 @@ func TestUpgradeCmd(t *testing.T) {
 
 func TestUpgradeCmdEmptyRoot(t *testing.T) {
 	_ = captureStderr(t, func() {
-		fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
-		err := upgradeCmd(fs, []string{"-root", ""})
+		ctx := context.Background()
+		err := upgradeCommand.Run(ctx, []string{"-root", ""})
 		if err == nil {
 			t.Errorf("want error but got no errors")
 			return
@@ -47,9 +50,11 @@ func TestUpgradeDryrun0(t *testing.T) {
 }
 
 func TestUpgradeDryrun1(t *testing.T) {
-	// an upgrade detected, it is "current"
+	// should detect an upgrade for "current" version.
+
+	const goname = "go1.24.0.windows-amd64"
+
 	root := t.TempDir()
-	goname := "go1.24.0.windows-amd64"
 	err := os.MkdirAll(filepath.Join(root, goname), 0777)
 	if err != nil {
 		t.Errorf("mkdir failed: %v", err)
@@ -61,9 +66,22 @@ func TestUpgradeDryrun1(t *testing.T) {
 		return
 	}
 
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		f, err := os.Open(filepath.Join("testdata", "list-20250820.json"))
+		if err != nil {
+			t.Errorf("failed open a file: %s", err)
+			return
+		}
+		defer f.Close()
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		io.Copy(w, f)
+	}))
+	defer srv.Close()
+	ctx := godlremote.WithDownloadBase(context.Background(), srv.URL)
+
 	got := captureStderr(t, func() {
-		fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
-		err = upgradeCmd(fs, []string{"-root", root, "-dryrun"})
+		err = upgradeCommand.Run(ctx, []string{"-root", root, "-dryrun"})
 		if err != nil {
 			t.Error(err)
 		}

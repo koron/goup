@@ -25,9 +25,7 @@ var uninstallCommand = subcmd.DefineCommand("uninstall", "uninstall Go releases"
 	return uninstallCmd(context2flagset(ctx), args)
 })
 
-var upgradeCommand = subcmd.DefineCommand("upgrade", "upgrade installed Go releases", func(ctx context.Context, args []string) error {
-	return upgradeCmd(context2flagset(ctx), args)
-})
+var upgradeCommand = subcmd.DefineCommand("upgrade", "upgrade installed Go releases", upgradeCmd)
 
 var listCommand = subcmd.DefineCommand("list", "list installed releases", func(ctx context.Context, args []string) error {
 	return localList(context2flagset(ctx), args)
