@@ -1,10 +1,12 @@
-package main
+package upgrade
 
 import (
 	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+	"os"
 	"path/filepath"
 	"sort"
 
@@ -15,6 +17,10 @@ import (
 	"github.com/koron/goup/internal/subcmd/uninstall"
 	"golang.org/x/mod/semver"
 )
+
+func debugf(msg string, args ...interface{}) {
+	// FIXME:
+}
 
 type upgrader interface {
 	install(ctx context.Context, ins install.Installer, ver string) error
@@ -53,7 +59,7 @@ func (ur upgraderRehearsal) uninstall(ctx context.Context, uni uninstall.Uninsta
 	return nil
 }
 
-var upgradeCommand = subcmd.DefineCommand("upgrade", "upgrade installed Go releases", func(ctx context.Context, args []string) error {
+var Command = subcmd.DefineCommand("upgrade", "upgrade installed Go releases", func(ctx context.Context, args []string) error {
 	var (
 		root     string
 		linkname string
@@ -61,8 +67,8 @@ var upgradeCommand = subcmd.DefineCommand("upgrade", "upgrade installed Go relea
 		all      bool
 	)
 	fs := subcmd.FlagSet(ctx)
-	fs.StringVar(&root, "root", envGoupRoot(), "root dir to install")
-	fs.StringVar(&linkname, "linkname", envGoupLinkname(), "name of symbolic link to switch")
+	fs.StringVar(&root, "root", common.GoupRoot(), "root dir to install")
+	fs.StringVar(&linkname, "linkname", common.GoupLinkname(), "name of symbolic link to switch")
 	fs.BoolVar(&dryrun, "dryrun", false, "don't switch, just test")
 	fs.BoolVar(&all, "all", false, "update all Go installations")
 	if err := fs.Parse(args); err != nil {
@@ -137,7 +143,7 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 		ver := target.remote.origin.Version
 		archiveFile, ok := ins.ArchiveFile(ver)
 		if !ok {
-			warnf("no archive files found for version=%s os=%s arch=%s, skipped", ver, ins.GOOS, ins.GOARCH)
+			slog.Warn("no archive files found, skipped", "version", ver, "os", ins.GOOS, "arch", ins.GOARCH)
 			continue
 		}
 		err := upg.install(ctx, ins, ver)
@@ -165,7 +171,7 @@ func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error
 		if err != nil {
 			return fmt.Errorf("failed to uinstall Go %s: %w", target.local.Name, err)
 		}
-		infof("upgraded Go %s to %s", target.local.Name, installedName)
+		fmt.Fprintf(os.Stderr, "upgraded Go %s to %s\n", target.local.Name, installedName)
 	}
 
 	return nil

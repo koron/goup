@@ -1,4 +1,4 @@
-package main
+package upgrade
 
 import (
 	"context"
@@ -9,12 +9,13 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/koron/goup/internal/common"
+	"github.com/koron/goup/internal/testutil"
 )
 
 func TestUpgradeCmd(t *testing.T) {
 	root := t.TempDir()
 	ctx := context.Background()
-	err := upgradeCommand.Run(ctx, []string{"-root", root})
+	err := Command.Run(ctx, []string{"-root", root})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,8 +23,8 @@ func TestUpgradeCmd(t *testing.T) {
 }
 
 func TestUpgradeCmdEmptyRoot(t *testing.T) {
-	_, _ = testSubcmd(t, nil, func(ctx context.Context) {
-		err := upgradeCommand.Run(ctx, []string{"-root", ""})
+	_, _ = testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{"-root", ""})
 		if err == nil {
 			t.Errorf("want error but got no errors")
 			return
@@ -62,13 +63,13 @@ func TestUpgradeDryrun1(t *testing.T) {
 		return
 	}
 
-	_, got := testSubcmd(t, nil, func(ctx context.Context) {
-		err := upgradeCommand.Run(ctx, []string{"-root", root, "-dryrun"})
+	_, got := testutil.TestSubcmd(t, nil, func(ctx context.Context) {
+		err := Command.Run(ctx, []string{"-root", root, "-dryrun"})
 		if err != nil {
 			t.Errorf("upgrade failed: %s", err)
 		}
 	})
-	assertStderr(t, strings.Join([]string{
+	testutil.AssertStderr(t, strings.Join([]string{
 		"upgraded Go go1.18.windows-amd64 to go1.18.6.windows-amd64",
 		""}, "\n"), got)
 
