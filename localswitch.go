@@ -12,7 +12,7 @@ import (
 )
 
 // localSwitch switches "current" selected Go version.
-func localSwitch(ctx context.Context, args []string) error {
+var switchCommand = subcmd.DefineCommand("switch", "switch active Go release", func(ctx context.Context, args []string) error {
 	var root string
 	var goos string
 	var goarch string
@@ -63,7 +63,7 @@ func localSwitch(ctx context.Context, args []string) error {
 		return nil
 	}
 	return switchGo(root, linkname, g.name)
-}
+})
 
 // switchGo switches/updates "current" symbolic link to goName.
 func switchGo(root, linkname, goName string) error {

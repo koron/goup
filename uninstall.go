@@ -11,7 +11,7 @@ import (
 	"github.com/koron-go/subcmd"
 )
 
-func uninstallCmd(ctx context.Context, args []string) error {
+var uninstallCommand = subcmd.DefineCommand("uninstall", "uninstall Go releases", func(ctx context.Context, args []string) error {
 	var root string
 	var goos string
 	var goarch string
@@ -47,7 +47,7 @@ func uninstallCmd(ctx context.Context, args []string) error {
 		}
 	}
 	return nil
-}
+})
 
 type uninstaller struct {
 	rootdir string

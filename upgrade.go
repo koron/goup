@@ -50,8 +50,7 @@ func (ur upgraderRehearsal) uninstall(ctx context.Context, uni uninstaller, ver 
 	return nil
 }
 
-// upgradeCmd upgrades installed Go version.
-func upgradeCmd(ctx context.Context, args []string) error {
+var upgradeCommand = subcmd.DefineCommand("upgrade", "upgrade installed Go releases", func(ctx context.Context, args []string) error {
 	var (
 		root     string
 		linkname string
@@ -71,7 +70,7 @@ func upgradeCmd(ctx context.Context, args []string) error {
 		return errors.New("required -root")
 	}
 	return upgrade(ctx, root, linkname, dryrun, all)
-}
+})
 
 // upgrade upgrades installed Go versions.
 func upgrade(ctx context.Context, root, linkname string, dryrun, all bool) error {

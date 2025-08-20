@@ -17,7 +17,7 @@ import (
 	"github.com/koron/goup/tarx"
 )
 
-func installCmd(ctx context.Context, args []string) error {
+var installCommand = subcmd.DefineCommand("install", "install Go releases", func(ctx context.Context, args []string) error {
 	var root string
 	var force bool
 	var goos string
@@ -58,7 +58,7 @@ func installCmd(ctx context.Context, args []string) error {
 		}
 	}
 	return nil
-}
+})
 
 type installer struct {
 	releases godlremote.Releases

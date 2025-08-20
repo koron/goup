@@ -9,7 +9,7 @@ import (
 	"github.com/koron/goup/godlremote"
 )
 
-func remoteList(ctx context.Context, args []string) error {
+var remotelistCommand = subcmd.DefineCommand("remotelist", "list published releases", func(ctx context.Context, args []string) error {
 	var all bool
 	var match string
 	fs := subcmd.FlagSet(ctx)
@@ -39,4 +39,4 @@ func remoteList(ctx context.Context, args []string) error {
 		fmt.Printf("  %s\n", r.Version)
 	}
 	return nil
-}
+})

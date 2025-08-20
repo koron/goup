@@ -13,8 +13,7 @@ import (
 
 var rxGoArchive = regexp.MustCompile(`^(go\d+(?:\.\d+)*(?:(?:rc|beta|alpha)\d+)?\.\D[^-]*-.+)\.(?:zip|tar\.gz)$`)
 
-// localClean removes download cache.
-func localClean(ctx context.Context, args []string) error {
+var cleanCommand = subcmd.DefineCommand("clean", "clean download caches", func(ctx context.Context, args []string) error {
 	var root string
 	var dryrun bool
 	var all bool
@@ -64,4 +63,4 @@ func localClean(ctx context.Context, args []string) error {
 		}
 	}
 	return nil
-}
+})

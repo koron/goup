@@ -14,8 +14,7 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-// localList lists all Go versions which locally installed.
-func localList(ctx context.Context, args []string) error {
+var listCommand = subcmd.DefineCommand("list", "list installed releases", func (ctx context.Context, args []string) error {
 	var root string
 	var linkname string
 	fs := subcmd.FlagSet(ctx)
@@ -47,7 +46,7 @@ func localList(ctx context.Context, args []string) error {
 		fmt.Printf("  %s\n", g.name)
 	}
 	return nil
-}
+})
 
 // localCurrent gets name of Go directory which is selected as "current"
 // version.

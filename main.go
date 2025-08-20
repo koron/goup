@@ -56,6 +56,16 @@ func envGoupLinkname() string {
 	return "current"
 }
 
+var rootCommandSet = subcmd.DefineRootSet(
+	remotelistCommand, // remotelist
+	installCommand,    // install
+	uninstallCommand,  // uninstall
+	upgradeCommand,    // upgrade
+	listCommand,       // list
+	switchCommand,     // switch
+	cleanCommand,      // clean
+)
+
 func main() {
 	flag.BoolVar(&debugEnable, "debug", false, "enable debug log")
 	flag.Parse()
