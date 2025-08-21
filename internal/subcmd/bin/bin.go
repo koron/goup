@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 
 	"github.com/koron-go/subcmd"
 	"github.com/koron/goup/internal/bindir"
@@ -23,6 +24,7 @@ func ListCommand(ctx context.Context, args []string) error {
 		return err
 	}
 	defer b.Close()
+	fmt.Printf("%s\t%s\t%s\t%s\t%s\n", "name", "go", "path", "main.path", "main.version")
 	for {
 		name, err := b.Read()
 		if err != nil {
@@ -33,11 +35,12 @@ func ListCommand(ctx context.Context, args []string) error {
 		}
 		bi, err := buildinfo.ReadFile(name)
 		if err != nil {
-			fmt.Printf("%s : failed to read: %s\n", name, err)
+			slog.Warn("failed to read", "name", name, "err", err)
 			continue
 		}
 		_ = bi
-		fmt.Printf("%s : go=%s path=%s main.path=%s main.version=%s\n", name, bi.GoVersion, bi.Path, bi.Main.Path, bi.Main.Version)
+		//fmt.Printf("%s : go=%s path=%s main.path=%s main.version=%s\n", name, bi.GoVersion, bi.Path, bi.Main.Path, bi.Main.Version)
+		fmt.Printf("%s\t%s\t%s\t%s\t%s\n", name, bi.GoVersion, bi.Path, bi.Main.Path, bi.Main.Version)
 	}
 	return nil
 }
