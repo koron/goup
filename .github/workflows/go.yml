@@ -3,7 +3,7 @@ name: Go
 on: [push]
 
 env:
-  GO_VERSION: '>=1.23.0'
+  GO_VERSION: '>=1.24.0'
 
 jobs:
 
@@ -31,3 +31,4 @@ jobs:
     - run: go build
 
 # based on: github.com/koron-go/_skeleton/.github/workflows/go.yml
+# $Hash:f4896f5aa7f5b429ac38ed1459247a517d97de4a198b825bac473ecf$
