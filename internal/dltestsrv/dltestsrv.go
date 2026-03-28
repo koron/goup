@@ -6,7 +6,7 @@ package dltestsrv
 import (
 	_ "embed"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"regexp"
 )
@@ -109,6 +109,6 @@ func (s *Server) serveFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		log.Printf("failed to write: %s", err)
+		slog.Warn("failed to write response body", "err", err)
 	}
 }
