@@ -2,7 +2,7 @@
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/koron/goup)](https://pkg.go.dev/github.com/koron/goup)
 [![Actions/Go](https://github.com/koron/goup/workflows/Go/badge.svg)](https://github.com/koron/goup/actions?query=workflow%3AGo)
-[![Go Report Card](https://goreportcard.com/badge/github.com/koron/goup)](https://goreportcard.com/report/github.com/koron/goup)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/koron/goup)
 
 Utility to download, extract and switch released go versions on Windows.
 
