@@ -4,7 +4,7 @@ github.com/koron-go/subcmd v0.0.4 h1:6mfmEJsfoJFySyv3fcckNoUkhPYik5ACmcfz1cyl8PU
 github.com/koron-go/subcmd v0.0.4/go.mod h1:7yYPwJuVmG9D5xOjxUVlPfRmcAqj6mT76+tWDyjrJGs=
 github.com/koron-go/zipx v1.3.0 h1:vQkP/1AffI0r2K/bqDb+J9WSsSYnUnT9jn73qM/XE0k=
 github.com/koron-go/zipx v1.3.0/go.mod h1:Pw+hV22M0K7IOYOk3oUvKP5dxURNr+M++FvGb45K09I=
-golang.org/x/mod v0.37.0 h1:vF1DjpVEshcIqoEaauuHebaLk1O1forxjxBaVn884JQ=
-golang.org/x/mod v0.37.0/go.mod h1:m8S8VeM9r4dzDwjrKO0a1sZP3YjeMamRRlD+fmR2Q/0=
+golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
+golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
 golang.org/x/sync v0.17.0 h1:l60nONMj9l5drqw6jlhIELNv9I0A4OFgRsG9k2oT9Ug=
 golang.org/x/sync v0.17.0/go.mod h1:9KTHXmSnoGruLpwFjVSX0lNNA75CykiMECbovNTZqGI=
